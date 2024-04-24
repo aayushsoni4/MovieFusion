@@ -1,6 +1,8 @@
 from app.routes import main_bp
+from flask import render_template, url_for
 
 
 @main_bp.route("/")
 def index():
-    return "<h1>Hello, World!</h1>"
+    title = "MovieFusion"
+    return render_template("index.html", title=title)
