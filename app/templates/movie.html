@@ -1,0 +1,210 @@
+{% include 'layout.html'%}
+<title>{{ movie_name }}</title>
+
+<body>
+    <!--==Scroll-Progress-bar=========================-->
+    <div id="progress">
+        <span id="progress-value"></span>
+    </div>
+    <!--==Navigation===================================-->
+    <nav class="navigation">
+        <!--menu-btn--------------->
+        <input type="checkbox" class="menu-btn" id="menu-btn">
+        <label for="menu-btn" class="menu-icon">
+            <span class="nav-icon"></span>
+        </label>
+        <!--logo------------------->
+        <a href="{{ url_for('main.index') }}" class="logo">
+            Movie<span>Fusion</span>
+        </a>
+        <!--menu------------------->
+        <ul class="menu">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Genre</a></li>
+            <li><a href="#">Account</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Sign Out</a></li>
+        </ul>
+        <!--Search-box------------->
+        <form action="" class="search-box">
+            <!--input-->
+            <input type="text" name="search" placeholder="Search Movie" class="search-input" required />
+            <!--btn-->
+            <button type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </nav>
+    <!--nav-end-->
+    <!--==Movie-Banner=========================================-->
+    <section class="movie-banner">
+        <!--==img==================================-->
+        <div class="m-banner-img">
+            <img alt="" src="https://media.themoviedb.org/t/p/w780/7C921eWK06n12c1miRXnYoEu5Yv.jpg">
+        </div>
+        <!--content================================-->
+        <div class="banner-container">
+            <!--title-container*******************----->
+            <div class="title-container">
+                <!--title-top===============-->
+                <div class="title-top">
+                    <!--title----->
+                    <div class="movie-title">
+                        <h1>Pirates of the Caribbean Salazar's Revenge</h1>
+                    </div>
+                    <!--more-about-movie-->
+                    <div class="more-about-movie">
+                        <span class="quality">Full HD</span>
+                        <div class="rating">
+                            8.2 <img alt="imbd" src="{{ url_for('static', filename='images/IMDb-icon.png') }}" />
+                        </div>
+                        <span>28 August 2017</span>
+                        <span>87min</span>
+                    </div>
+                    <!--language--------->
+                    <div class="language">
+                        <span>English</span>
+                    </div>
+                </div>
+                <!--Title-botttom==========================-->
+                <div class="title-bottom">
+                    <!--category------->
+                    <div class="category">
+                        <strong>Category</strong><br />
+                        <a href="#">Horror</a>
+                        <a href="#">Mistery</a>
+                        <a href="#">Thriller</a>
+                    </div>
+                    <!--trailer-btn---->
+                    <a href="https://www.youtube.com/watch?v=ZgQkEf3dQ08" class="watch-btn">Watch Trailer</a>
+                </div>
+            </div>
+            <!--play-btn******************************--->
+            <div class="play-btn-container">
+                <div class="play-btn">
+                    <a href="javascript:void">
+                        <i class="fas fa-play"></i>
+                    </a>
+                </div>
+            </div>
+            <!--Video/full-Movie***************************-->
+            <div id="play" class="play">
+                <!--close-btn--->
+                <a href="javascript:void" class="close-movie">
+                    <i class="fas fa-times"></i>
+                </a>
+                <!--movie------->
+                <div class="play-movie">
+                    <!-- <iframe id="m-video" src="https://www.youtube.com/embed/Hgeu5rhoxxY">
+                    </iframe> -->
+                    <video id="m-video" controls>
+                        <source
+                            src="{{ url_for('static', filename='movie-data/Pirates-of-the-Caribbean-Salazar\'s-Revenge/Movie.mp4') }}"
+                            type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Banner-end------------->
+    <!--details=====================================-->
+    <section class="movie-details">
+        <strong>Pirates of the Caribean: Salazar's Revenge</strong>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint, veniam architecto, debitis quia similique
+            adipisci autem quod eligendi delectus dolorum iusto. Eius, nobis ducimus! Corrupti nobis id itaque facere a.
+        </p>
+    </section>
+    <!--==ScreenShots===============================-->
+    <section class="screenshots">
+        <strong>ScreenShots</strong>
+        <!--screenshots-container----------->
+        <div class="screen-s-container">
+            <img alt=""
+                src="{{ url_for('static', filename='movie-data/Pirates-of-the-Caribbean-Salazar\'s-Revenge/screenshot-1.jpg') }}">
+            <img alt=""
+                src="{{ url_for('static', filename='movie-data/Pirates-of-the-Caribbean-Salazar\'s-Revenge/screenshot-2.jpg') }}">
+            <img alt=""
+                src="{{ url_for('static', filename='movie-data/Pirates-of-the-Caribbean-Salazar\'s-Revenge/screenshot-3.jpg') }}">
+            <img alt=""
+                src="{{ url_for('static', filename='movie-data/Pirates-of-the-Caribbean-Salazar\'s-Revenge/screenshot-4.jpg') }}">
+        </div>
+    </section>
+    <!--==footer==============================-->
+    <footer>
+        <!--footer-logo--->
+        <a href="{{ url_for('main.index') }}" class="logo">
+            Movie<span>Fusion</span>
+        </a>
+    </footer>
+    <!--==jQuery=======================================-->
+    <script src="{{ url_for('static', filename='js/jQuery.js') }}"></script>
+    <script>
+        /*==scroll-progress-bar======================*/
+        let scrollPrecentage = () => {
+            let scrollProgress = document.getElementById("progress");
+            let pos = document.documentElement.scrollTop;
+            let calcHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrollValue = Math.round(pos * 100 / calcHeight);
+            scrollProgress.style.width = scrollValue + "%";
+        }
+        window.onscroll = scrollPrecentage;
+        window.onload = scrollPrecentage;
+        /*--menu-btn-fixed-when-scroll============*/
+        $(window).scroll(function () {
+            if ($(document).scrollTop() > 20) {
+                $('.navigation').addClass('fix-icon');
+            }
+            else {
+                $('.navigation').removeClass('fix-icon');
+            }
+        });
+
+        /*==popup-open==================================*/
+        $(document).on('click', '.play-btn a', function () {
+            $('.play').addClass('active-popup');
+        });
+        /*==popup-Close==================================*/
+        $(document).on('click', '.close-movie', function () {
+            $('.play').removeClass('active-popup');
+        });
+
+
+        window.onload = function () {
+            var closeButton = document.querySelector('.close-movie');
+            closeButton.addEventListener('click', function () {
+                var iframe = document.querySelector('.play-movie iframe');
+                var videoSrc = iframe.src;
+                iframe.src = ''; // This line stops the video
+                iframe.src = videoSrc;
+                document.getElementById('play').style.display = 'none';
+            });
+        };
+
+        $(document).ready(function () {
+            // Variable to store the current video time
+            var currentTime = 0;
+
+            // Play the video when the popup opens
+            $('.play-btn a').on('click', function () {
+                var video = $('#m-video').get(0);
+                if (video) {
+                    // Set the current time to where it was left off
+                    video.currentTime = currentTime;
+                    video.play();
+                }
+            });
+
+            // Pause the video and save the current time when the popup closes
+            $('.close-movie').on('click', function () {
+                var video = $('#m-video').get(0);
+                if (video) {
+                    // Save the current time
+                    currentTime = video.currentTime;
+                    video.pause();
+                }
+            });
+        });
+
+
+    </script>
+</body>
