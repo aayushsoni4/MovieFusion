@@ -91,7 +91,7 @@
                     <!--box------------------->
                     <div class="main-slider-box">
                         <!--overlayer-------->
-                        <a href="{{ url_for('main.movie', movie_name='Pirates of the Caribbean: Salazar\'s Revenge') }}"
+                        <a href="{{ url_for('movie.movie', movie_name='Pirates of the Caribbean: Salazar\'s Revenge'|url_slug) }}"
                             class="main-slider-overlay">
                             <i class="fas fa-play"></i>
                         </a>
@@ -109,7 +109,7 @@
                                 <div class="movie-name">
                                     <span>2017</span>
                                     <a
-                                        href="{{ url_for('main.movie', movie_name='Pirates of the Caribbean: Salazar\'s Revenge') }}">Pirates
+                                        href="{{ url_for('movie.movie', movie_name='Pirates of the Caribbean: Salazar\'s Revenge') }}">Pirates
                                         of the Caribbean: Salazar's Revenge</a>
                                 </div>
                                 <!--Category-and-rating---->
