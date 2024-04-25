@@ -48,7 +48,7 @@ def movie_response(movie_id):
     try:
         return movies[movie_id]
     except KeyError:
-        return None
+        return {"error": "Movie not found for the provided ID"}
 
 
 def backdrop_poster(movie_id):
@@ -67,6 +67,17 @@ def popular_movies():
     sorted_movies = sorted(
         filtered_movies,
         key=lambda x: x.get("vote_average", x.get("popularity", 0)),
+        reverse=True,
+    )
+    return sorted_movies[:20]
+
+
+def latest_movies():
+    filtered_movies = [movie for movie in movies.values() if movie.get("release_date") and movie.get("vote_count", 0) > 5000]
+
+    sorted_movies = sorted(
+        filtered_movies,
+        key=lambda x: x.get("release_date", ""),
         reverse=True,
     )
     return sorted_movies[:20]
