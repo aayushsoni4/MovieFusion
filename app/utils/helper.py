@@ -49,3 +49,11 @@ def backdrop_poster(movie_id):
         return "http://image.tmdb.org/t/p/w780" + data["backdrop_path"]
     except KeyError:
         return "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"
+
+
+def popular_movies():
+    return sorted(
+        movies.values(),
+        key=lambda x: x.get("popularity", x.get("vote_average", 0)),
+        reverse=True,
+    )[:10]
