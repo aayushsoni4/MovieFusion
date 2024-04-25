@@ -4,13 +4,14 @@ from datetime import datetime
 from app.utils.helper import movie_response, get_movie_id_by_name, get_movie_trailer
 
 
-
 @movie_bp.route("/<path:movie_name>")
 def movie(movie_name):
     movie_id = get_movie_id_by_name(movie_name)
     movie = movie_response(movie_id=movie_id)
-    movie['release'] = datetime.strptime(movie['release_date'], "%Y-%m-%d").strftime("%d %B %Y")
-    movie['trailer'] = get_movie_trailer(movie_id)
+    movie["release"] = datetime.strptime(movie["release_date"], "%Y-%m-%d").strftime(
+        "%d %B %Y"
+    )
+    movie["trailer"] = get_movie_trailer(movie_id)
     return render_template("movie.html", movie=movie)
 
 

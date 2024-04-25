@@ -33,6 +33,7 @@ for movie_id, movie_data in movies.items():
     slug_title = url_slug(title)
     title_id[slug_title] = movie_id
 
+
 def fetch_poster(movie_id):
     try:
         data = movies[movie_id]
@@ -70,12 +71,14 @@ def popular_movies():
     )
     return sorted_movies[:20]
 
+
 def get_movie_id_by_name(name):
     return title_id.get(name)
 
+
 def get_movie_trailer(movie_id):
     data = movie_response(movie_id)
-    query = data['title']+" "+str(data['release_date'][:4])+" official trailer"
+    query = data["title"] + " " + str(data["release_date"][:4]) + " official trailer"
     try:
         video_url = trailer_finder.findYTtrailer(query)
     except (googleapiclient.errors.HttpError, Exception) as e:
