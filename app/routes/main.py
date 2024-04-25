@@ -1,6 +1,6 @@
 from app.routes import main_bp
 from flask import render_template
-from utils.helper import popular_movies
+from app.utils.helper import popular_movies
 
 
 @main_bp.route("/")
