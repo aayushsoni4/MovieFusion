@@ -82,7 +82,8 @@
                         <strong>Category</strong><br />
                         {% if movie['genres'] %}
                         {% for genre in movie['genres']%}
-                        <a href="#">{{ genre['name'] }}</a>
+                        <a href="{{url_for('category.category', genre_name=genre['name']|url_slug)}}">{{ genre['name']
+                            }}</a>
                         {% endfor %}
                         {% endif %}
                     </div>

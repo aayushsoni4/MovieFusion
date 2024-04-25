@@ -73,7 +73,11 @@ def popular_movies():
 
 
 def latest_movies():
-    filtered_movies = [movie for movie in movies.values() if movie.get("release_date") and movie.get("vote_count", 0) > 5000]
+    filtered_movies = [
+        movie
+        for movie in movies.values()
+        if movie.get("release_date") and movie.get("vote_count", 0) > 5000
+    ]
 
     sorted_movies = sorted(
         filtered_movies,
@@ -98,3 +102,19 @@ def get_movie_trailer(movie_id):
         except Exception as e:
             video_url = "https://www.youtube.com/watch?v=5PSNL1qE6VY"
     return video_url
+
+
+def filter_movies_by_genre(category):
+    filtered_movies = [
+        movie
+        for movie in movies.values()
+        if movie.get("vote_count", 0) > 10000
+        and any(genre.get("name") == category for genre in movie.get("genres", []))
+    ]
+
+    sorted_movies = sorted(
+        filtered_movies,
+        key=lambda x: x.get("vote_average", x.get("popularity", 0)),
+        reverse=True,
+    )
+    return sorted_movies[:20]

@@ -40,80 +40,15 @@
         </form>
     </nav>
     <!--nav-end-->
-    <!--==slider============================================-->
-    <section id="main-slider">
-        <!-- Swiper -->
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                {% for movie in popular_movie %}
-                <div class="swiper-slide">
-                    <!--box------------------->
-                    <div class="main-slider-box">
-                        <!--overlayer-------->
-                        <a href="{{ url_for('movie.movie', movie_name=movie['title']|url_slug) }}"
-                            class="main-slider-overlay">
-                            <i class="fas fa-play"></i>
-                        </a>
-                        <!--img----------->
-                        <div class="main-slider-img">
-                            <img alt="Poster" src="http://image.tmdb.org/t/p/w780{{ movie['poster_path'] }}" />
-                        </div>
-                        <!--text---------->
-                        <div class="main-slider-text">
-                            <!--quality----->
-                            <span class="quality">Full HD</span>
-                            <!--bottom-text-->
-                            <div class="bottom-text">
-                                <!--name----->
-                                <div class="movie-name">
-                                    <span>{{ movie['release_year'] }}</span>
-                                    <a href="{{ url_for('movie.movie', movie_name=movie['title']|url_slug) }}">
-                                        {{movie['title']}}
-                                    </a>
-                                </div>
-                                <!--Category-and-rating---->
-                                <div class="category-rating">
-                                    <!--category-->
-                                    <div class="category">
-                                        <strong>Category</strong><br />
-                                        {% if movie.get('genres') %}
-                                        {% for genre in movie['genres']%}
-                                        <a href="{{url_for('category.category', genre_name=genre['name']|url_slug)}}">{{
-                                            genre['name']
-                                            }}</a>
-                                        {% endfor %}
-                                        {% endif %}
-                                    </div>
-                                    <!--rating--->
-                                    <div class="rating">
-                                        {{ '%.1f' % movie['vote_average'] }}
-                                        <img alt="tmbd"
-                                            src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_1-5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4.svg" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-    <!--btns-------------------->
-    <div class="slider-btns">
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-    </div>
-    <!--slider-end-------->
     <!--==Latest-Movies==================================-->
     <section id="latest">
         <!--heading-------->
         <div class="latest-heading">
-            <h1>Latest Movies</h1>
+            <h1><strong> {{genre}} </strong></h1>
         </div>
         <!--container------->
         <div class="post-container">
-            {% for movie in latest_movie %}
+            {% for movie in movies %}
             <div class="post-box">
                 <!--img-->
                 <div class="post-img">
@@ -128,7 +63,7 @@
                         <!--name----->
                         <div class="movie-name">
                             <span>{{ movie['release_year'] }}</span>
-                            <a href="{{ url_for('main.index', movie_name=movie['title']|url_slug) }}">
+                            <a href="{{ url_for('movie.movie', movie_name=movie['title']|url_slug) }}">
                                 {{movie['title']}}
                             </a>
                         </div>
@@ -157,14 +92,6 @@
             {% endfor %}
         </div>
         <!--container-end--->
-        <!--page-number=====================-->
-        <div class="page-number">
-            <a href="#" class="page-active">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            ....
-            <a href="#">100</a>
-        </div>
     </section>
     <!--latest-post-end------->
     <!--==footer==============================-->
