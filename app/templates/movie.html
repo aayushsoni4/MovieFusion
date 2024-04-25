@@ -1,5 +1,5 @@
 {% include 'layout.html'%}
-<title>{{ movie_name }}</title>
+<title>{{ movie['title']}}</title>
 
 <body>
     <!--==Scroll-Progress-bar=========================-->
@@ -40,7 +40,7 @@
     <section class="movie-banner">
         <!--==img==================================-->
         <div class="m-banner-img">
-            <img alt="" src="https://media.themoviedb.org/t/p/w780/7C921eWK06n12c1miRXnYoEu5Yv.jpg">
+            <img alt="" src="https://media.themoviedb.org/t/p/w780{{movie['backdrop_path']}}">
         </div>
         <!--content================================-->
         <div class="banner-container">
@@ -50,16 +50,24 @@
                 <div class="title-top">
                     <!--title----->
                     <div class="movie-title">
-                        <h1>Pirates of the Caribbean Salazar's Revenge</h1>
+                        <h1>{{movie['title']}}</h1>
                     </div>
                     <!--more-about-movie-->
                     <div class="more-about-movie">
                         <span class="quality">Full HD</span>
                         <div class="rating">
-                            8.2 <img alt="imbd" src="{{ url_for('static', filename='images/IMDb-icon.png') }}" />
+                            {{ '%.1f' % movie['vote_average']}}
+                            <img alt="imbd" src="{{ url_for('static', filename='images/IMDb-icon.png') }}" />
                         </div>
-                        <span>28 August 2017</span>
-                        <span>87min</span>
+                        <span>{{movie['release']}}</span>
+                        {% if movie['runtime'] < 60 %} <span>
+                            {{ movie['runtime'] }}min
+                            </span>
+                            {% else %}
+                            <span>
+                                {{ movie['runtime'] // 60 }}h {{ movie['runtime'] % 60 }}min
+                            </span>
+                            {% endif %}
                     </div>
                     <!--language--------->
                     <div class="language">
@@ -71,12 +79,14 @@
                     <!--category------->
                     <div class="category">
                         <strong>Category</strong><br />
-                        <a href="#">Horror</a>
-                        <a href="#">Mistery</a>
-                        <a href="#">Thriller</a>
+                        {% if movie['genres'] %}
+                        {% for genre in movie['genres']%}
+                        <a href="#">{{ genre['name'] }}</a>
+                        {% endfor %}
+                        {% endif %}
                     </div>
                     <!--trailer-btn---->
-                    <a href="https://www.youtube.com/watch?v=ZgQkEf3dQ08" class="watch-btn">Watch Trailer</a>
+                    <a href="{{movie['trailer']}}" class="watch-btn">Watch Trailer</a>
                 </div>
             </div>
             <!--play-btn******************************--->
@@ -95,8 +105,6 @@
                 </a>
                 <!--movie------->
                 <div class="play-movie">
-                    <!-- <iframe id="m-video" src="https://www.youtube.com/embed/Hgeu5rhoxxY">
-                    </iframe> -->
                     <video id="m-video" controls>
                         <source
                             src="{{ url_for('static', filename='movie-data/Pirates-of-the-Caribbean-Salazar\'s-Revenge/Movie.mp4') }}"
@@ -109,9 +117,9 @@
     <!--Banner-end------------->
     <!--details=====================================-->
     <section class="movie-details">
-        <strong>Pirates of the Caribean: Salazar's Revenge</strong>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint, veniam architecto, debitis quia similique
-            adipisci autem quod eligendi delectus dolorum iusto. Eius, nobis ducimus! Corrupti nobis id itaque facere a.
+        <strong>{{movie['title']}}</strong>
+        <p>
+            {{movie['overview']}}
         </p>
     </section>
     <!--==ScreenShots===============================-->
