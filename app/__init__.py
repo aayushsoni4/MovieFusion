@@ -15,10 +15,11 @@ def create_app(config_class=Config):
     app.jinja_env.filters["url_slug"] = url_slug
 
     db.init_app(app)
-    from app.routes import auth_bp, main_bp, movie_bp
+    from app.routes import auth_bp, main_bp, movie_bp, category_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(movie_bp, url_prefix="/movie")
+    app.register_blueprint(category_bp, url_prefix="/category")
     app.register_blueprint(main_bp)
 
     return app
