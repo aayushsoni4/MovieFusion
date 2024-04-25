@@ -2,6 +2,7 @@ from flask import render_template, jsonify
 from app.routes import movie_bp
 from datetime import datetime
 from app.utils.helper import movie_response, get_movie_id_by_name, get_movie_trailer
+from app.utils.recommendation import recommended_movies
 
 
 @movie_bp.route("/<path:movie_name>")
@@ -12,7 +13,9 @@ def movie(movie_name):
         "%d %B %Y"
     )
     movie["trailer"] = get_movie_trailer(movie_id)
-    return render_template("movie.html", movie=movie)
+    return render_template(
+        "movie.html", movie=movie, recommended_movie=recommended_movies(movie_id)
+    )
 
 
 @movie_bp.route("/<int:movie_id>")

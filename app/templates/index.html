@@ -128,7 +128,7 @@
                         <!--name----->
                         <div class="movie-name">
                             <span>{{ movie['release_year'] }}</span>
-                            <a href="{{ url_for('main.index', movie_name=movie['title']|url_slug) }}">
+                            <a href="{{ url_for('movie.movie', movie_name=movie['title']|url_slug) }}">
                                 {{movie['title']}}
                             </a>
                         </div>
@@ -191,6 +191,7 @@
         }
         window.onscroll = scrollPrecentage;
         window.onload = scrollPrecentage;
+
         /*Initialize Swiper*/
         var swiper = new Swiper(".mySwiper", {
             slidesPerView: 1,
