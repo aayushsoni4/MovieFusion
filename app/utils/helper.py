@@ -1,3 +1,5 @@
+from app.utils import trailer_finder
+import googleapiclient
 import pickle
 import re
 import os
@@ -25,6 +27,11 @@ dataset_path = os.path.join(current_dir, "..", "..", "dataset", "movie_api.pkl")
 
 movies = load_movie_data(dataset_path)
 
+title_id = {}
+for movie_id, movie_data in movies.items():
+    title = movie_data.get("title", "")
+    slug_title = url_slug(title)
+    title_id[slug_title] = movie_id
 
 def fetch_poster(movie_id):
     try:
@@ -52,8 +59,28 @@ def backdrop_poster(movie_id):
 
 
 def popular_movies():
-    return sorted(
-        movies.values(),
-        key=lambda x: x.get("popularity", x.get("vote_average", 0)),
+    filtered_movies = [
+        movie for movie in movies.values() if movie.get("vote_count", 0) > 10000
+    ]
+
+    sorted_movies = sorted(
+        filtered_movies,
+        key=lambda x: x.get("vote_average", x.get("popularity", 0)),
         reverse=True,
-    )[:10]
+    )
+    return sorted_movies[:20]
+
+def get_movie_id_by_name(name):
+    return title_id.get(name)
+
+def get_movie_trailer(movie_id):
+    data = movie_response(movie_id)
+    query = data['title']+" "+str(data['release_date'][:4])+" official trailer"
+    try:
+        video_url = trailer_finder.findYTtrailer(query)
+    except (googleapiclient.errors.HttpError, Exception) as e:
+        try:
+            video_url = trailer_finder.findYTtrailerbs4(query)
+        except Exception as e:
+            video_url = "https://www.youtube.com/watch?v=5PSNL1qE6VY"
+    return video_url
