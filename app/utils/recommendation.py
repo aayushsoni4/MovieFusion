@@ -23,5 +23,5 @@ features_similarity = load_model(dataset_path)
 
 def recommended_movies(movie_id):
     recommended_movie = features_similarity[movie_id][:12]
-    movies = [movie_response(int(movie_id)) for movie_id in recommended_movie]
+    movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
     return movies
