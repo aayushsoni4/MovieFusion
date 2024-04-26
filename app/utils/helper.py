@@ -93,7 +93,12 @@ def get_movie_id_by_name(name):
 
 def get_movie_trailer(movie_id):
     data = movie_response(movie_id)
-    query = data["title"] + " " + str(data["release_date"][:4]) + " official trailer"
+    query = (
+        data.get("original_title", data.get("title", "Avatar 2009"))
+        + " "
+        + str(data["release_date"][:4])
+        + " official trailer"
+    )
     try:
         video_url = trailer_finder.findYTtrailer(query)
     except (googleapiclient.errors.HttpError, Exception) as e:
