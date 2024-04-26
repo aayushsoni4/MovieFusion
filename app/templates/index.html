@@ -30,14 +30,12 @@
             <li><a href="#">Sign Out</a></li>
         </ul>
         <!--Search-box------------->
-        <form action="" class="search-box">
-            <!--input-->
-            <input type="text" name="search" placeholder="Search Movie" class="search-input" required />
-            <!--btn-->
-            <button type="submit">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search Movie" class="search-input" required />
+            <button onclick="submitSearch()" class="search-button">
                 <i class="fas fa-search"></i>
             </button>
-        </form>
+        </div>
     </nav>
     <!--nav-end-->
     <!--==slider============================================-->
@@ -230,6 +228,26 @@
             }
             else {
                 $('.navigation').removeClass('fix-icon');
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        function submitSearch() {
+            var searchQuery = document.getElementById('search-input').value;
+            var slugifiedQuery = slugify(searchQuery);
+            window.location.href = '/search/' + encodeURIComponent(slugifiedQuery);
+        }
+        function slugify(text) {
+            return text
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '') // Remove special characters
+                .replace(/\s+/g, '-') // Replace spaces with hyphens
+                .replace(/-+/g, '-'); // Remove consecutive hyphens
+        }
+        document.getElementById('search-input').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                submitSearch();
             }
         });
     </script>

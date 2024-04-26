@@ -123,3 +123,11 @@ def filter_movies_by_genre(category):
         reverse=True,
     )
     return sorted_movies[:20]
+
+
+def perform_search(query):
+    return [
+        movie
+        for movie in movies.values()
+        if query.lower() in url_slug(movie.get("title", ""))
+    ]

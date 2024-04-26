@@ -42,11 +42,11 @@
     <section id="latest">
         <!--heading-------->
         <div class="latest-heading">
-            <h1><strong> {{genre}} </strong></h1>
+            <h1>Search results for <strong>"{{query}}"</strong></h1>
         </div>
         <!--container------->
         <div class="post-container">
-            {% for movie in movies %}
+            {% for movie in search_result %}
             <div class="post-box">
                 <!--img-->
                 <div class="post-img">
