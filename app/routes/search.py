@@ -6,4 +6,6 @@ from app.utils.helper import perform_search
 @search_bp.route("/<query>")
 def search(query):
     search_results = perform_search(query)
-    return render_template("search.html", query=query, search_result=search_results)
+    return render_template(
+        "search.html", query=(" ".join(query.split("-"))), search_result=search_results
+    )
