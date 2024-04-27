@@ -22,13 +22,22 @@
             Movie<span>Fusion</span>
         </a>
         <!--menu------------------->
-        <ul class="menu">
+        <ul class="menu" id="main-menu">
             <li><a href="{{url_for('main.index')}}">Home</a></li>
-            <li><a href="#">Genre</a></li>
+            <li id="genre-menu"><a href="#">Genre</a></li>
             <li><a href="#">Account</a></li>
             <li><a href="#">Contact</a></li>
             <li><a href="#">Sign Out</a></li>
         </ul>
+        <!-- Genre List (not displayed initially) -->
+        <script type="text/template" id="genre-list-template">
+            <li><a href="{{ url_for('category.category', genre_name='action') }}">Action</a></li>
+            <li><a href="{{ url_for('category.category', genre_name='science-fiction') }}">Sci-Fi</a></li>
+            <li><a href="{{ url_for('category.category', genre_name='adventure') }}">Adventure</a></li>
+            <li><a href="{{ url_for('category.category', genre_name='drama') }}">Drama</a></li>
+            <li><a href="{{ url_for('category.category', genre_name='romance') }}">Romance</a></li>
+            <li><a href="#" id="back-button"><i class="fa fa-arrow-left" aria-hidden="true"></i></a></li>
+        </script>
         <!--Search-box------------->
         <div class="search-box">
             <input type="text" id="search-input" placeholder="Search Movie" class="search-input" required />
@@ -174,6 +183,65 @@
             if (event.key === 'Enter') {
                 event.preventDefault();
                 submitSearch();
+            }
+        });
+    </script>
+    <script>
+        // Function to replace the main menu with the genre list
+        function replaceMenuWithGenres() {
+            var mainMenu = document.getElementById('main-menu');
+            var genreListHTML = document.getElementById('genre-list-template').innerHTML;
+            mainMenu.innerHTML = genreListHTML;
+            // Add click event listener to the back button
+            document.getElementById('back-button').addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default anchor behavior
+                showMainMenu();
+            });
+        }
+
+        // Function to show the main menu
+        function showMainMenu() {
+            var mainMenuHTML = `
+                <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                <li id="genre-menu"><a href="#">Genre</a></li>
+                <li><a href="#">Account</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Sign Out</a></li>
+            `;
+            document.getElementById('main-menu').innerHTML = mainMenuHTML;
+            // Reattach the event listener to the genre menu item
+            document.getElementById('genre-menu').addEventListener('click', function (event) {
+                event.preventDefault();
+                replaceMenuWithGenres();
+            });
+        }
+
+        // Event listener for the menu icon
+        document.querySelector('.menu-icon').addEventListener('click', function () {
+            // Check if the menu is open by checking the checkbox state
+            var menuCheckbox = document.getElementById('menu-btn');
+            if (!menuCheckbox.checked) {
+                // If the menu is being closed, show the main menu
+                showMainMenu();
+            }
+        });
+
+        // Initial event listener for the genre menu item
+        document.getElementById('genre-menu').addEventListener('click', function (event) {
+            event.preventDefault();
+            replaceMenuWithGenres();
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                // Check if the menu is open
+                var menuCheckbox = document.getElementById('menu-btn');
+                if (menuCheckbox.checked) {
+                    // If the menu is open, close it by unchecking the checkbox
+                    menuCheckbox.checked = false;
+                    // Call the function to show the main menu
+                    showMainMenu();
+                }
             }
         });
     </script>
