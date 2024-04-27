@@ -96,7 +96,6 @@
                     </div>
                     <!--trailer-btn---->
                     <a href="javascript:void(0);" class="watch-btn" onclick="toggleTrailer();">Watch Trailer</a>
-                    <!-- <a href="{{movie['trailer']}}" class="watch-btn">Watch Trailer</a> -->
                 </div>
             </div>
             <!--play-btn******************************--->
@@ -116,9 +115,7 @@
                 <!--movie------->
                 <div class="play-movie">
                     <video id="m-video" controls>
-                        <source
-                            src="{{ url_for('static', filename='movie-data/Pirates-of-the-Caribbean-Salazar\'s-Revenge/Movie.mp4') }}"
-                            type="video/mp4">
+                        <source src="{{ url_for('static', filename='movie-data/Interstellar.mp4') }}" type="video/mp4">
                     </video>
                 </div>
             </div>
@@ -375,5 +372,17 @@
                 }
             }
         });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                // Check if the video player is open
+                var playElement = document.getElementById('play');
+                if (playElement.classList.contains('active-popup')) {
+                    // If the player is open, simulate a click on the close button
+                    $('.close-movie').click();
+                }
+            }
+        });
+
     </script>
 </body>
