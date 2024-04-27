@@ -13,6 +13,8 @@ def movie(movie_name):
         "%d %B %Y"
     )
     movie["trailer"] = get_movie_trailer(movie_id)
+    video_id = movie['trailer'].split("v=")[1]
+    movie["embed_trailer"] = "https://www.youtube.com/embed/" + f"{video_id}" + "?si=uxBB_OOhszRSE_CN"
     return render_template(
         "movie.html", movie=movie, recommended_movie=recommended_movies(movie_id)
     )
