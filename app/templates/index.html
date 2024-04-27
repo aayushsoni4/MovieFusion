@@ -305,5 +305,18 @@
             event.preventDefault();
             replaceMenuWithGenres();
         });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                // Check if the menu is open
+                var menuCheckbox = document.getElementById('menu-btn');
+                if (menuCheckbox.checked) {
+                    // If the menu is open, close it by unchecking the checkbox
+                    menuCheckbox.checked = false;
+                    // Call the function to show the main menu
+                    showMainMenu();
+                }
+            }
+        });
     </script>
 </body>
