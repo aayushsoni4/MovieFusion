@@ -289,7 +289,7 @@ body {
 .rating img {
     height: 10px;
     width: 20px;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
 }
 
@@ -409,6 +409,42 @@ body {
 .main-slider-text .movie-name a:hover {
     opacity: 0.5;
     transition: all ease 0.3s;
+}
+
+/* Year, title, and genres styles */
+.movie-poster .movie-name span,
+.movie-poster .movie-name a,
+.movie-poster .category {
+    position: absolute;
+    width: 100%;
+    left: 10px;
+    padding: 10px;
+    text-align: left;
+}
+
+/* Year positioning */
+.movie-poster .movie-name span {
+    top: 65%;
+}
+
+/* Title positioning */
+.movie-poster .movie-name a {
+    top: 70%;
+    white-space: normal;
+}
+
+/* Genres positioning */
+.movie-poster .category {
+    top: 85%;
+}
+
+/* Rating styles */
+.movie-poster .rating {
+    position: absolute;
+    top: 25px;
+    width: 100%;
+    text-align: right;
+    right: 20px;
 }
 
 /*page-number-----*/

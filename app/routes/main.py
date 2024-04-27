@@ -8,11 +8,6 @@ def index():
     popular_movie = popular_movies()
     latest_movie = latest_movies()
 
-    for movie in popular_movie:
-        release_date = movie.get("release_date", "")
-        release_year = release_date.split("-")[0] if release_date else ""
-        movie["release_year"] = release_year
-
     for movie in latest_movie:
         release_date = movie.get("release_date", "")
         release_year = release_date.split("-")[0] if release_date else ""
