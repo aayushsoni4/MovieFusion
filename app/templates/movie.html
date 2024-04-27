@@ -86,7 +86,8 @@
                         {% endif %}
                     </div>
                     <!--trailer-btn---->
-                    <a href="{{movie['trailer']}}" class="watch-btn">Watch Trailer</a>
+                    <a href="javascript:void(0);" class="watch-btn" onclick="toggleTrailer();">Watch Trailer</a>
+                    <!-- <a href="{{movie['trailer']}}" class="watch-btn">Watch Trailer</a> -->
                 </div>
             </div>
             <!--play-btn******************************--->
@@ -115,6 +116,13 @@
         </div>
     </section>
     <!--Banner-end------------->
+    <!--==Trailer-iframe=========================================-->
+    <section id="trailer-section">
+        <iframe width="720" height="405" src="{{movie['embed_trailer']}}" title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </section>
+    <!--Trailer-End=====================================-->
     <!--details=====================================-->
     <section class="movie-details">
         <strong>{{movie['title']}}</strong>
@@ -262,7 +270,7 @@
             });
         });
     </script>
-    <script type="text/javascript">
+    <script>
         function submitSearch() {
             var searchQuery = document.getElementById('search-input').value;
             var slugifiedQuery = slugify(searchQuery);
@@ -281,5 +289,25 @@
                 submitSearch();
             }
         });
+
+        function toggleTrailer() {
+            var trailerSection = document.getElementById('trailer-section');
+            var movieBanner = document.querySelector('.movie-banner'); // Get the movie banner element
+            if (trailerSection.classList.contains('visible')) {
+                trailerSection.classList.remove('visible');
+                trailerSection.classList.add('hidden');
+                setTimeout(function () {
+                    trailerSection.style.display = 'none';
+                    movieBanner.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Center the movie banner
+                }, 50); // Hide after animation
+            } else {
+                trailerSection.style.display = 'flex';
+                trailerSection.classList.remove('hidden');
+                trailerSection.classList.add('visible');
+                trailerSection.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Center the trailer section
+            }
+        }
+
+
     </script>
 </body>
