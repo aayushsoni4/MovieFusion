@@ -14,14 +14,26 @@ def load_model(file_path):
 
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
-dataset_path = os.path.join(
+features_similarity_dataset_path = os.path.join(
     current_dir, "..", "..", "models", "features_similarity.pkl"
 )
 
-features_similarity = load_model(dataset_path)
+features_similarity = load_model(features_similarity_dataset_path)
+
+items_similarity_dataset_path = os.path.join(
+    current_dir, "..", "..", "models", "items_similarity.pkl"
+)
+
+items_similarity = load_model(items_similarity_dataset_path)
 
 
 def recommended_movies(movie_id):
     recommended_movie = features_similarity[movie_id][:12]
+    movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
+    return movies
+
+
+def because_you_watched(movie_id):
+    recommended_movie = items_similarity[movie_id][:4]
     movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
     return movies

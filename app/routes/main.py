@@ -1,6 +1,7 @@
 from app.routes import main_bp
 from flask import render_template, jsonify, session
-from app.utils.helper import popular_movies, latest_movies
+from app.utils.recommendation import because_you_watched
+from app.utils.helper import popular_movies, latest_movies, movie_response
 from app.utils.visited import add_visited_movie
 
 
@@ -14,8 +15,23 @@ def index():
         release_year = release_date.split("-")[0] if release_date else ""
         movie["release_year"] = release_year
 
+    visited_movie_id = session.get("visited_movies", [])
+    visited_movie_id = sorted(visited_movie_id, reverse=True, key=lambda x: x[1])
+    visited_movie = []
+    for movie_id, _ in visited_movie_id:
+        visited_movie.append(movie_response(movie_id))
+
+    because_you_watch = []
+    if len(visited_movie) > 0:
+        because_you_watch = because_you_watched(visited_movie_id[0][0])
+
     return render_template(
-        "index.html", popular_movie=popular_movie, latest_movie=latest_movie
+        "index.html",
+        popular_movie=popular_movie,
+        latest_movie=latest_movie,
+        visited_movie=visited_movie,
+        watched_title=visited_movie[0]["title"] if len(visited_movie) > 0 else None,
+        because_you_watch=because_you_watch,
     )
 
 
@@ -28,4 +44,5 @@ def history(movie_id):
 @main_bp.route("/history")
 def visited_movies():
     visited_movie = session.get("visited_movies", [])
+    visited_movie = sorted(visited_movie, reverse=True, key=lambda x: x[1])
     return jsonify({"message": visited_movie})

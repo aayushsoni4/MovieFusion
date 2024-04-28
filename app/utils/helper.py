@@ -84,7 +84,7 @@ def latest_movies():
         key=lambda x: x.get("release_date", ""),
         reverse=True,
     )
-    return sorted_movies[:20]
+    return sorted_movies[:12]
 
 
 def get_movie_id_by_name(name):
