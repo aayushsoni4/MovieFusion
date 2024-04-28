@@ -338,6 +338,15 @@
                 },
             },
         });
+        // Stop autoplay when mouse enters the Swiper container
+        $(".mySwiper").on("mouseenter", function () {
+            swiper.autoplay.stop();
+        });
+
+        // Start autoplay when mouse leaves the Swiper container
+        $(".mySwiper").on("mouseleave", function () {
+            swiper.autoplay.start();
+        });
         /*--menu-btn-fixed-when-scroll============*/
         $(window).scroll(function () {
             if ($(document).scrollTop() > 20) {
