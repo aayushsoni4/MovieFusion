@@ -439,12 +439,12 @@ body {
 }
 
 /* Rating styles */
-.rating {
+.movie-post .rating {
     position: absolute;
-    top: 25px;
+    top: 5.5%;
     width: 100%;
     text-align: right;
-    right: 20px;
+    right: 10%;
 }
 
 /*page-number-----*/
