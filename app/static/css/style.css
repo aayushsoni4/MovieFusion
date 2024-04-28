@@ -439,7 +439,7 @@ body {
 }
 
 /* Rating styles */
-.movie-poster .rating {
+.rating {
     position: absolute;
     top: 25px;
     width: 100%;
