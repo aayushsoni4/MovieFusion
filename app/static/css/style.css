@@ -289,7 +289,7 @@ body {
 .rating img {
     height: 10px;
     width: 20px;
-    object-fit: cover;
+    object-fit: fill;
     object-position: center;
 }
 
