@@ -86,7 +86,8 @@
             <!--play-btn******************************--->
             <div class="play-btn-container">
                 <div class="play-btn">
-                    <a href="javascript:void">
+                    <!-- Add data-movie-id attribute to store the movie ID -->
+                    <a href="javascript:void(0)" class="play-movie-btn" data-movie-id="{{ movie['id'] }}">
                         <i class="fas fa-play"></i>
                     </a>
                 </div>
@@ -262,6 +263,28 @@
                 }
             });
         });
+
+        $(document).ready(function () {
+            // Event listener for play button click
+            $('.play-movie-btn').on('click', function () {
+                // Get the movie ID from the data attribute
+                var movieId = $(this).data('movie-id');
+                // Make an AJAX request to the Flask endpoint
+                $.ajax({
+                    type: 'GET',
+                    url: '/history/' + movieId, // Endpoint URL with movie ID parameter
+                    success: function (response) {
+                        // Handle the response if needed
+                        console.log('Movie ID sent to history endpoint');
+                    },
+                    error: function (error) {
+                        // Handle any errors
+                        console.error('Error sending movie ID to history endpoint:', error);
+                    }
+                });
+            });
+        });
+
     </script>
     <script>
         function submitSearch() {

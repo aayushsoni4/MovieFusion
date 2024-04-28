@@ -1,6 +1,7 @@
 from app.routes import main_bp
-from flask import render_template
+from flask import render_template, jsonify, session
 from app.utils.helper import popular_movies, latest_movies
+from app.utils.visited import add_visited_movie
 
 
 @main_bp.route("/")
@@ -16,3 +17,15 @@ def index():
     return render_template(
         "index.html", popular_movie=popular_movie, latest_movie=latest_movie
     )
+
+
+@main_bp.route("/history/<int:movie_id>", methods=["GET"])
+def history(movie_id):
+    add_visited_movie(movie_id)
+    return jsonify({"message": "Movie ID added to visited_movies session list"})
+
+
+@main_bp.route("/history")
+def visited_movies():
+    visited_movie = session.get("visited_movies", [])
+    return jsonify({"message": visited_movie})
