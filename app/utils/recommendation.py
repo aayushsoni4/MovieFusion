@@ -34,6 +34,6 @@ def recommended_movies(movie_id):
 
 
 def because_you_watched(movie_id):
-    recommended_movie = items_similarity[movie_id][:4]
+    recommended_movie = items_similarity[movie_id][:10]
     movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
     return movies
