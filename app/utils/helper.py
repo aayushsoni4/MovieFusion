@@ -59,9 +59,12 @@ def backdrop_poster(movie_id):
         return "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"
 
 
-def popular_movies():
+def popular_movies(already_watched):
     filtered_movies = [
-        movie for movie in movies.values() if movie.get("vote_count", 0) > 10000
+        movie
+        for movie in movies.values()
+        if movie.get("vote_count", 0) > 10000
+        and movie.get("id") not in [movie_id for movie_id, _ in already_watched]
     ]
 
     sorted_movies = sorted(
@@ -72,11 +75,13 @@ def popular_movies():
     return sorted_movies[:20]
 
 
-def latest_movies():
+def latest_movies(already_watched):
     filtered_movies = [
         movie
         for movie in movies.values()
-        if movie.get("release_date") and movie.get("vote_count", 0) > 5000
+        if movie.get("release_date")
+        and movie.get("vote_count", 0) > 5000
+        and movie.get("id") not in [movie_id for movie_id, _ in already_watched]
     ]
 
     sorted_movies = sorted(
@@ -109,12 +114,13 @@ def get_movie_trailer(movie_id):
     return video_url
 
 
-def filter_movies_by_genre(category):
+def filter_movies_by_genre(category, already_watched):
     filtered_movies = [
         movie
         for movie in movies.values()
         if movie.get("vote_count", 0) > 10000
         and any(genre.get("name") == category for genre in movie.get("genres", []))
+        and movie.get("id") not in [movie_id for movie_id, _ in already_watched]
     ]
 
     sorted_movies = sorted(

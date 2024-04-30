@@ -27,13 +27,11 @@ items_similarity_dataset_path = os.path.join(
 items_similarity = load_model(items_similarity_dataset_path)
 
 
-def recommended_movies(movie_id):
-    recommended_movie = features_similarity[movie_id][:12]
-    movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
-    return movies
-
-
-def because_you_watched(movie_id):
-    recommended_movie = items_similarity[movie_id][:10]
+def recommended_movies(movie_id, already_watched):
+    recommended_movie = features_similarity[movie_id]
+    already_watched_ids = [watched_id for watched_id, _ in already_watched]
+    recommended_movie = [
+        id for id in recommended_movie if id not in already_watched_ids
+    ][:12]
     movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
     return movies
