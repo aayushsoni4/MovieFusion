@@ -430,6 +430,7 @@ body {
 /* Title positioning */
 .movie-poster .movie-name a {
     top: 70%;
+    padding-right: 5%;
     white-space: normal;
 }
 
