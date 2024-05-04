@@ -19,3 +19,7 @@ def register():
     if request.method == "POST":
         return redirect(url_for("main.index"))
     return render_template("register.html")
+
+@auth_bp.route("/signout")
+def signout():
+    return redirect(url_for("auth.login"))
