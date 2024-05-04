@@ -1,0 +1,47 @@
+<head>
+    <title>Register | MovieFusion</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/fav-icon.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form_style.css') }}" />
+</head>
+
+<body>
+    <section>
+        <section id="container"></section>
+        <div class="signin">
+            <div class="content">
+                <h2>Sign Up</h2>
+                <div class="form">
+                    <form action="{{ url_for('auth.register') }}" method="post">
+                        <div class="inputBox">
+                            <input type="text" required> <i>Username</i>
+                        </div>
+                        <div class="inputBox" style="margin-top: 5%;">
+                            <input type="mail" required> <i>Email</i>
+                        </div>
+                        <div class="inputBox" style="margin-top: 5%;">
+                            <input type="password" required> <i>Password</i>
+                        </div>
+                        <div class="inputBox" style="margin-top: 5%;">
+                            <input type="password" required> <i>Confirm Password</i>
+                        </div>
+                        <div class="links" style="margin-top: 5%;">
+                            <p>Already have an account?</p>
+                            <a href="{{ url_for('auth.login') }}">Sign In</a>
+                        </div>
+                        <div class="inputBox" style="margin-top: 5%;">
+                            <input type="submit" value="Register">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        const numberOfSpans = 300;
+        const container = document.getElementById('container');
+        for (let i = 0; i < numberOfSpans; i++) {
+            const span = document.createElement('span');
+            container.appendChild(span);
+        }
+    </script>
+</body>
