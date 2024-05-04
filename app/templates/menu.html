@@ -4,7 +4,7 @@
         <li><a href="{{url_for('main.index')}}">Home</a></li>
         <li id="genre-menu"><a href="#">Genre</a></li>
         <li><a href="#">Account</a></li>
-        <li><a href="{{url_for('auth.signout')}}">Sign Out</a></li>
+        <li><a href="{{url_for('auth.logout')}}">Sign Out</a></li>
     </ul>
     <!-- Genre List (not displayed initially) -->
     <script type="text/template" id="genre-list-template">
@@ -36,7 +36,7 @@
             <li><a href="{{ url_for('main.index') }}">Home</a></li>
             <li id="genre-menu"><a href="#">Genre</a></li>
             <li><a href="#">Account</a></li>
-            <li><a href="{{url_for('auth.signout')}}">Sign Out</a></li>
+            <li><a href="{{url_for('auth.logout')}}">Sign Out</a></li>
         `;
         document.getElementById('main-menu').innerHTML = mainMenuHTML;
         // Reattach the event listener to the genre menu item
