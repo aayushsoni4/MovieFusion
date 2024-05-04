@@ -1,5 +1,6 @@
 from app.routes import main_bp
-from flask import render_template, jsonify, session
+from flask import render_template, jsonify, session, redirect, url_for
+from flask_login import current_user
 from app.utils.recommendation import recommended_movies
 from app.utils.helper import popular_movies, latest_movies, movie_response
 from app.utils.visited import add_visited_movie
@@ -7,6 +8,9 @@ from app.utils.visited import add_visited_movie
 
 @main_bp.route("/")
 def index():
+    if not current_user.is_authenticated:
+        return redirect(url_for("auth.login"))
+
     visited_movie_id = session.get("visited_movies", [])
     visited_movie_id = sorted(visited_movie_id, reverse=True, key=lambda x: x[1])
     visited_movie = []

@@ -32,6 +32,9 @@ def forgot_password():
 
 @auth_bp.route("/register", methods=["POST", "GET"])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.index"))
+
     if request.method == "POST":
         username = request.form["username"]
         email = request.form["email"]
