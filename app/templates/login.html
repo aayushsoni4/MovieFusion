@@ -13,13 +13,13 @@
                 <div class="form">
                     <form action="{{url_for('auth.login')}}" method="post">
                         <div class="inputBox">
-                            <input type="text" required> <i>Username</i>
+                            <input type="text" name="username" required> <i>Username</i>
                         </div>
                         <div class="inputBox" style="margin-top: 5%;">
-                            <input type="password" required> <i>Password</i>
+                            <input type="password" name="password" required> <i>Password</i>
                         </div>
                         <div class="links" style="margin-top: 5%;"> <a href="#">Forgot Password</a>
-                            <a href="{{url_for('auth.register')}}">Signup</a>
+                            <a href="{{url_for('auth.register')}}">Sign Up</a>
                         </div>
                         <div class="inputBox" style="margin-top: 5%;">
                             <input type="submit" value="Login">

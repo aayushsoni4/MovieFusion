@@ -13,16 +13,16 @@
                 <div class="form">
                     <form action="{{ url_for('auth.register') }}" method="post">
                         <div class="inputBox">
-                            <input type="text" required> <i>Username</i>
+                            <input type="text" name="username" required> <i>Username</i>
                         </div>
                         <div class="inputBox" style="margin-top: 5%;">
-                            <input type="mail" required> <i>Email</i>
+                            <input type="email" name="email" required> <i>Email</i>
                         </div>
                         <div class="inputBox" style="margin-top: 5%;">
-                            <input type="password" required> <i>Password</i>
+                            <input type="password" name="password" required> <i>Password</i>
                         </div>
                         <div class="inputBox" style="margin-top: 5%;">
-                            <input type="password" required> <i>Confirm Password</i>
+                            <input type="password" name="confirm_password" required> <i>Confirm Password</i>
                         </div>
                         <div class="links" style="margin-top: 5%;">
                             <p>Already have an account?</p>

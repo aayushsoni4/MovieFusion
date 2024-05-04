@@ -70,8 +70,13 @@ section .signin {
     justify-content: center;
     align-items: center;
     padding: 40px;
-    border-radius: 4px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 9);
+    border-radius: 10px;
+    box-shadow: 8px 8px 2px #e70634;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+section .signin:hover {
+    box-shadow: 4px 3px #e70634;
 }
 
 section .signin .content {
