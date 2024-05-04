@@ -5,6 +5,8 @@ from flask import render_template, request, url_for, redirect
 @auth_bp.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
         return redirect(url_for("main.index"))
     return render_template("login.html")
 
