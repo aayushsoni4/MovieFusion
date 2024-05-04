@@ -114,13 +114,12 @@ def get_movie_trailer(movie_id):
     return video_url
 
 
-def filter_movies_by_genre(category, already_watched):
+def filter_movies_by_genre(category):
     filtered_movies = [
         movie
         for movie in movies.values()
         if movie.get("vote_count", 0) > 10000
         and any(genre.get("name") == category for genre in movie.get("genres", []))
-        and movie.get("id") not in [movie_id for movie_id, _ in already_watched]
     ]
 
     sorted_movies = sorted(
