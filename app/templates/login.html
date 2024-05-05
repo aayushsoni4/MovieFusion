@@ -5,6 +5,15 @@
 </head>
 
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <section>
         <section id="container"></section>
         <div class="signin">
@@ -36,6 +45,11 @@
             const span = document.createElement('span');
             container.appendChild(span);
         }
-
+        setTimeout(function () {
+            const alertElement = document.querySelector('.alert');
+            if (alertElement) {
+                alertElement.classList.add('hide');
+            }
+        }, 5000);
     </script>
 </body>
