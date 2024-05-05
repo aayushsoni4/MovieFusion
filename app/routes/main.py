@@ -95,8 +95,9 @@ def history(movie_id):
     """
     try:
         logger.info(
-            f"History page requested for movie ID: {movie_id} by user: {current_user.username}"
+            f"Movie with ID: {movie_id} was played by user: {current_user.username}"
         )
+
         add_visited_movie(movie_id)
         return jsonify({"message": "Movie ID added to visited_movies session list"})
 
