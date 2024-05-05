@@ -1,5 +1,6 @@
 venv
 .env
 __pycache__
+app.log
 temp.py
 temp.txt
