@@ -95,6 +95,14 @@ body {
     top: 0px;
 }
 
+.navigation .github-icon {
+    padding: 0 10px;
+    margin-right: 10px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 30px;
+}
+
 .menu-btn {
     display: none;
 }
