@@ -10,6 +10,26 @@ from logger import logger
 @movie_bp.route("/<path:movie_name>")
 @login_required
 def movie(movie_name):
+    """
+    Render the movie page for the specified movie name.
+
+    Args:
+        movie_name (str): The name of the movie extracted from the URL path.
+
+    Returns:
+        str: Rendered HTML template for the movie page.
+
+    Raises:
+        Exception: If an error occurs during rendering.
+
+    Notes:
+        - Requires the user to be logged in to access the movie page.
+        - Logs the request for the movie page.
+        - Retrieves visited movies from the session.
+        - Retrieves detailed information for the specified movie.
+        - Formats release date and retrieves trailer for the movie.
+        - Renders the 'movie.html' template with movie details and recommended movies.
+    """
     try:
         logger.info(
             f"Movie page requested for: {movie_name} by user: {current_user.username}"
@@ -43,6 +63,22 @@ def movie(movie_name):
 
 @movie_bp.route("/<int:movie_id>")
 def movie_detail(movie_id):
+    """
+    Retrieve details for the specified movie ID.
+
+    Args:
+        movie_id (int): The unique identifier of the movie.
+
+    Returns:
+        JSON: Response containing the details of the movie.
+
+    Raises:
+        Exception: If an error occurs during retrieval.
+
+    Notes:
+        - Logs the request for retrieving movie details.
+        - Returns a JSON response with movie details.
+    """
     try:
         logger.info(
             f"Movie details page requested for ID: {movie_id} by user: {current_user.username}"

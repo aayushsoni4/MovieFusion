@@ -11,11 +11,20 @@ from app import db
 @auth_bp.route("/login", methods=["POST", "GET"])
 def login():
     """
-    Log in route.
+    Handle the login process for a user.
 
-    If user is already authenticated, redirects to the main index page.
-    If request method is POST, attempts to log in the user using the provided credentials.
-    If successful, redirects to the main index page. Otherwise, displays an error message.
+    GET: Serve the login page.
+    POST: Authenticate the user and redirect to the index page if successful,
+    otherwise, flash an error message and re-render the login page.
+
+    Returns:
+        On GET: Rendered 'login.html' template.
+        On POST: Redirect to 'main.index' if login is successful, otherwise
+        render 'login.html' with an error message.
+
+    Notes:
+        - This route is accessible only to non-authenticated users.
+        - Logs successful and failed login attempts.
     """
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
@@ -32,12 +41,12 @@ def login():
                 logger.info(f"User {username} logged in successfully.")
                 return redirect(url_for("main.index"))
             else:
-                flash("Incorrect username or password. Please try again.", "error")
+                flash("Incorrect password. Please try again.", "error")
                 logger.warning(
                     f"Login attempt failed for user {username}: incorrect password."
                 )
         else:
-            flash("Username not found. Please check your credentials.", "error")
+            flash("User not found. Please check your credentials.", "error")
             logger.warning(f"Login attempt failed: user {username} not found.")
     return render_template("login.html")
 
@@ -45,9 +54,12 @@ def login():
 @auth_bp.route("/forgot_password", methods=["POST", "GET"])
 def forgot_password():
     """
-    Forgot password route.
+    Serve the forgot password page.
 
-    Placeholder for future password recovery functionality.
+    This is a placeholder route for future implementation of password recovery functionality.
+
+    Returns:
+        A simple HTML string with a message.
     """
     return "<h1>Forgot Password</h1>"
 
@@ -55,12 +67,21 @@ def forgot_password():
 @auth_bp.route("/register", methods=["POST", "GET"])
 def register():
     """
-    Register route.
+    Handle the registration process for a new user.
 
-    If user is already authenticated, redirects to the main index page.
-    If request method is POST, attempts to register a new user.
-    If registration is successful, redirects to the login page with a success message.
-    If username or email already exists, displays an error message.
+    GET: Serve the registration page.
+    POST: Create a new user account and redirect to the login page if successful,
+    otherwise, flash an error message and re-render the registration page.
+
+    Returns:
+        On GET: Rendered 'register.html' template.
+        On POST: Redirect to 'auth.login' if registration is successful, otherwise
+        render 'register.html' with an error message.
+
+    Notes:
+        - This route is accessible only to non-authenticated users.
+        - Checks for existing usernames and emails to avoid duplicates.
+        - Logs successful user registration.
     """
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
@@ -100,9 +121,14 @@ def register():
 @login_required
 def logout():
     """
-    Logout route.
+    Log out the current user and redirect to the login page.
 
-    Logs out the current user and redirects to the login page with a notification message.
+    Returns:
+        Redirect to 'auth.login' after logging out the user.
+
+    Notes:
+        - This route is accessible only to authenticated users.
+        - Logs user logout.
     """
     logout_user()
     flash("You have been logged out. See you soon!", "info")

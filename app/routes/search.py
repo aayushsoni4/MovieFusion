@@ -8,6 +8,24 @@ from logger import logger
 @search_bp.route("/<query>")
 @login_required
 def search(query):
+    """
+    Render the search results page for the specified query.
+
+    Args:
+        query (str): The search query extracted from the URL path.
+
+    Returns:
+        str: Rendered HTML template for the search results page.
+
+    Raises:
+        Exception: If an error occurs during search or rendering.
+
+    Notes:
+        - Requires the user to be logged in to access the search page.
+        - Logs the request for the search page.
+        - Performs a search based on the query.
+        - Renders the 'search.html' template with search results.
+    """
     try:
         logger.info(
             f"Search page requested for query: {query} by user: {current_user.username}"
