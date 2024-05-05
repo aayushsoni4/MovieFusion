@@ -59,9 +59,7 @@ def history(movie_id):
         return jsonify({"message": "Movie ID added to visited_movies session list"})
 
     except Exception as e:
-        error_message = (
-            "An error occurred while processing your request. Please try again later."
-        )
+        error_message = "An error occurred while processing your request."
         logger.error(f"{error_message} Error: {str(e)}")
         return jsonify({"error": error_message}), 500
 
