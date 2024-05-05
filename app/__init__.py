@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import Config
+from logger import logger
 
 
 db = SQLAlchemy()
@@ -40,4 +41,5 @@ def create_app(config_class=Config):
 
         return User.query.get(int(user_id))
 
+    logger.info("Flask application initialized successfully.")
     return app

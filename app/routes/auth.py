@@ -1,8 +1,10 @@
+import logging
 from app.routes import auth_bp
 from flask import render_template, request, url_for, redirect, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
+from logger import logger
 from app import db
 
 
@@ -27,11 +29,16 @@ def login():
         if user:
             if check_password_hash(user.password_hash, password):
                 login_user(user)
+                logger.info(f"User {username} logged in successfully.")
                 return redirect(url_for("main.index"))
             else:
                 flash("Incorrect username or password. Please try again.", "error")
+                logger.warning(
+                    f"Login attempt failed for user {username}: incorrect password."
+                )
         else:
             flash("Username not found. Please check your credentials.", "error")
+            logger.warning(f"Login attempt failed: user {username} not found.")
     return render_template("login.html")
 
 
@@ -66,9 +73,15 @@ def register():
         existing_user_email = User.query.filter_by(email=email).first()
         if existing_user_username:
             flash("Username already exists. Please choose another.", "error")
+            logger.warning(
+                f"Registration attempt failed: username {username} already exists."
+            )
             return redirect(url_for("auth.register"))
         elif existing_user_email:
             flash("Email already exists. Please choose another.", "error")
+            logger.warning(
+                f"Registration attempt failed: email {email} already exists."
+            )
             return redirect(url_for("auth.register"))
         else:
             hashed_password = generate_password_hash(password)
@@ -78,6 +91,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash("Registration successful. You can now log in.", "success")
+            logger.info(f"User {username} registered successfully.")
             return redirect(url_for("auth.login"))
     return render_template("register.html")
 
@@ -92,4 +106,5 @@ def logout():
     """
     logout_user()
     flash("You have been logged out. See you soon!", "info")
+    logger.info("User logged out.")
     return redirect(url_for("auth.login"))
