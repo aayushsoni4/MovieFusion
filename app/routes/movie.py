@@ -1,5 +1,5 @@
 from flask import render_template, jsonify, session, redirect, url_for
-from flask_login import current_user
+from flask_login import login_required
 from app.routes import movie_bp
 from datetime import datetime
 from app.utils.helper import movie_response, get_movie_id_by_name, get_movie_trailer
@@ -7,10 +7,8 @@ from app.utils.recommendation import recommended_movies
 
 
 @movie_bp.route("/<path:movie_name>")
+@login_required
 def movie(movie_name):
-    if not current_user.is_authenticated:
-        return redirect(url_for("auth.login"))
-
     visited_movie_id = session.get("visited_movies", [])
 
     movie_id = get_movie_id_by_name(movie_name)
