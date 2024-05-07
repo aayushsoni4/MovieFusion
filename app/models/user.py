@@ -39,10 +39,6 @@ class User(UserMixin, db.Model):
         """Check if the user account is active."""
         return self.is_activated
 
-    def is_anonymous(self):
-        """Check if the user is anonymous."""
-        return False
-
     def __repr__(self):
         """String representation of the User object."""
         return "<User {}>".format(self.username)
