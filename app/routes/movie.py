@@ -4,6 +4,7 @@ from app.routes import movie_bp
 from datetime import datetime
 from app.utils.helper import movie_response, get_movie_id_by_name, get_movie_trailer
 from app.utils.recommendation import recommended_movies
+from app.models import UserHistory
 from logger import logger
 
 

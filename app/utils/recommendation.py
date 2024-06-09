@@ -28,8 +28,8 @@ items_similarity = load_model(items_similarity_dataset_path)
 
 
 def recommended_movies(movie_id, already_watched):
-    recommended_movie = features_similarity[movie_id]
-    already_watched_ids = [str(int(float(watched_id))) for watched_id, _ in already_watched]
+    recommended_movie = features_similarity.get(movie_id, [])
+    already_watched_ids = [watched_id for watched_id, _ in already_watched]
     recommended_movie = [
         id for id in recommended_movie if id not in already_watched_ids
     ][:12]

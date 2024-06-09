@@ -4,6 +4,8 @@ from flask_login import current_user, login_required
 from app.utils.recommendation import recommended_movies
 from app.utils.helper import popular_movies, latest_movies, movie_response
 from app.utils.visited import add_visited_movie
+from app.models import UserHistory
+from app import db
 from logger import logger
 
 
@@ -34,9 +36,13 @@ def index():
         # Log the index page request
         logger.info(f"Index page requested by user: {current_user.username}")
 
-        # Fetch visited movies from the session
-        visited_movie_id = session.get("visited_movies", [])
-        visited_movie_id = sorted(visited_movie_id, reverse=True, key=lambda x: x[1])
+        # Fetch visited movies from the database, ordered by watched_at
+        visited_movie_id = (
+            db.session.query(UserHistory.movie_id, UserHistory.watched_at)
+            .filter_by(user_id=current_user.id)
+            .order_by(UserHistory.watched_at.desc())
+            .all()
+        )
 
         # Get detailed information for visited movies
         visited_movie = [movie_response(movie_id) for movie_id, _ in visited_movie_id]
@@ -76,6 +82,7 @@ def index():
 
 
 @main_bp.route("/history/<int:movie_id>", methods=["GET"])
+@login_required
 def history(movie_id):
     """
     Add a movie to the user's visited history.
@@ -108,6 +115,7 @@ def history(movie_id):
 
 
 @main_bp.route("/history")
+@login_required
 def visited_movies():
     """
     Retrieve the list of movies visited by the current user.
@@ -124,9 +132,24 @@ def visited_movies():
     """
     try:
         logger.info(f"Visited movies page requested by user: {current_user.username}")
-        visited_movie = session.get("visited_movies", [])
-        visited_movie = sorted(visited_movie, reverse=True, key=lambda x: x[1])
-        return jsonify({"visited_movies": visited_movie})
+
+        # Fetch visited movies from the database, ordered by watched_at
+        visited_movies = (
+            db.session.query(UserHistory.movie_id, UserHistory.watched_at)
+            .filter_by(user_id=current_user.id)
+            .order_by(UserHistory.watched_at.desc())
+            .all()
+        )
+
+        # Convert to list of dictionaries
+        visited_movie_list = [
+            {
+                "movie_id": movie_id,
+                "watched_at": watched_at.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            for movie_id, watched_at in visited_movies
+        ]
+        return jsonify({"visited_movies": visited_movie_list})
 
     except Exception as e:
         error_message = (

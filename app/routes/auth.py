@@ -55,9 +55,14 @@ def login():
                 else:
                     # If account is not activated, send OTP for validation
                     session["email"] = user.email
-                    send_otp(session.get("email"))
-                    flash("Account not activated. Please verify your email.", "info")
-                    return redirect(url_for("auth.validate_user"))
+                    if send_otp(session.get("email")):
+                        flash(
+                            "Account not activated. Please verify your email.", "info"
+                        )
+                        return redirect(url_for("auth.validate_user"))
+                    else:
+                        flash("Error sending OTP. Please try again later.", "error")
+                        return redirect(url_for("auth.login"))
             else:
                 flash("Incorrect password. Please try again.", "error")
                 logger.warning(
