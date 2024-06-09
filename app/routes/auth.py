@@ -91,7 +91,7 @@ def resend_otp():
     GET: Resend OTP to the email stored in session.
 
     Returns:
-        Redirects to 'main.profile' if user is authenticated.
+        Redirects to 'main.index' if user is authenticated.
         Redirects to 'auth.validate_user' if OTP is resent successfully.
         Redirects to 'auth.register' if email sending fails or session email is not found.
         Flashes appropriate messages based on success or failure of the OTP resend process.
@@ -99,9 +99,9 @@ def resend_otp():
     Notes:
         - If OTP resend fails, the user is deleted from the database.
     """
-    # Redirect to profile if user is already authenticated
+    # Redirect to index if user is already authenticated
     if current_user.is_authenticated:
-        return redirect(url_for("main.profile"))
+        return redirect(url_for("main.index"))
 
     # Retrieve the user's email from the session
     email = session.get("email")
@@ -208,9 +208,9 @@ def validate_user():
         - Activates the user account if OTP validation is successful.
         - Logs successful and failed OTP validation attempts.
     """
-    # Redirect to profile if user is already authenticated
+    # Redirect to index if user is already authenticated
     if current_user.is_authenticated:
-        return redirect(url_for("main.profile"))
+        return redirect(url_for("main.index"))
 
     if request.method == "POST":
         otp_entered = request.form.get("otp")

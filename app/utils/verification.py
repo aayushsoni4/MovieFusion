@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 # Initialize TOTP with a secret key and a time interval of 300 seconds (5 minutes)
-otp = pyotp.TOTP(os.getenv("otp_key"), interval=300)
+otp = pyotp.TOTP(os.getenv("otp_key"), interval=60)
 
 
 def add_user(username, email, password):

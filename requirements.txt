@@ -8,6 +8,7 @@ click==8.1.7
 colorama==0.4.6
 Flask==3.0.3
 Flask-Login==0.6.3
+Flask-Mail==0.10.0
 Flask-SQLAlchemy==3.1.1
 google-api-core==2.18.0
 google-api-python-client==2.127.0
@@ -26,6 +27,7 @@ proto-plus==1.23.0
 protobuf==4.25.3
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
+pyotp==2.9.0
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
