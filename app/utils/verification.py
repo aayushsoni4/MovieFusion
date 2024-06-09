@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 # Initialize TOTP with a secret key and a time interval of 300 seconds (5 minutes)
-otp = pyotp.TOTP(os.getenv("otp_key"), interval=60)
+otp = pyotp.TOTP(os.getenv("otp_key"), interval=300)
 
 
 def add_user(username, email, password):
@@ -47,29 +47,93 @@ def add_user(username, email, password):
 
 def send_otp(email):
     """
-    Send a one-time password (OTP) for email verification.
+    Sends a personalized email containing a one-time password (OTP) for account verification.
 
     Args:
-        email (str): The email address to which the OTP will be sent.
+        email (str): The email address of the new user.
+        token (str): The verification token.
 
     Returns:
-        bool: True if the OTP is sent successfully, False otherwise.
+        bool: True if the email was sent successfully, False otherwise.
     """
     try:
-        # Generate a one-time password (OTP)
-        totp_value = otp.now()
+        # Generate a new OTP token for the email
+        token = otp.now()
 
-        # Create an email message with the OTP
-        message = Message("Your OTP for Verification", recipients=[email])
-        message.body = f"Your OTP is: {totp_value}"
+        # Personalized subject line
+        subject = "Welcome to MovieFusion! Let's Get Started"
 
-        # Send the email
-        mail.send(message)
-        logger.info(f"OTP sent successfully to {email}.")
+        # HTML email body with engaging content and formatting
+        message_body = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                .container {{
+                    font-family: Arial, sans-serif;
+                    margin: 0 auto;
+                    padding: 20px;
+                    max-width: 600px;
+                    background-color: #f9f9f9;
+                    border: 1px solid #e70634;
+                    border-radius: 10px;
+                }}
+                .header {{
+                    color: #e70634;
+                    text-align: center;
+                }}
+                .otp {{
+                    font-size: 24px;
+                    text-align: center;
+                    margin: 20px 0;
+                    padding: 10px;
+                    background-color: #fff;
+                    border: 1px solid #e70634;
+                    border-radius: 5px;
+                    display: inline-block;
+                }}
+                .footer {{
+                    text-align: center;
+                    margin-top: 20px;
+                    color: #555;
+                }}
+                .footer a {{
+                    color: #e70634;
+                    text-decoration: none;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2 class="header">Welcome to MovieFusion!</h2>
+                <p>Thank you for joining our movie streaming platform with a personalized recommendation system.
+                    We're excited to help you discover your next favorite film!</p>
+
+                <p>To complete your registration, please enter the following OTP:</p>
+                <div class="otp">{token}</div>
+
+                <p>This OTP is valid for 5 minutes. If you don't verify your account within this time, you can request a new OTP.</p>
+
+                <p>We hope you enjoy your MovieFusion experience!</p>
+
+                <div class="footer">
+                    <p>Best regards,<br>
+                    The MovieFusion Team</p>
+                    <p><a href="https://github.com/aayushsoni4/MovieFusion">Visit MovieFusion</a></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        msg = Message(
+            subject, recipients=[email], html=message_body
+        )  # Use HTML format for the email body
+        mail.send(msg)
+        logger.info(f"Verification email sent successfully to {email}.")
         return True
     except Exception as e:
-        # Log any exception that occurs
-        logger.error(f"Error sending OTP to {email}: {e}")
+        logger.error(f"Error sending verification email to {email}: {e}")
         return False
 
 
