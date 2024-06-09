@@ -60,28 +60,30 @@ def backdrop_poster(movie_id):
 
 
 def popular_movies(already_watched):
+    already_watched_ids = [movie_id for movie_id, _ in already_watched]
     filtered_movies = [
         movie
         for movie in movies.values()
         if movie.get("vote_count", 0) > 10000
-        and movie.get("id") not in [movie_id for movie_id, _ in already_watched]
+        and movie.get("id") not in already_watched_ids
     ]
 
     sorted_movies = sorted(
         filtered_movies,
-        key=lambda x: x.get("vote_average", x.get("popularity", 0)),
+        key=lambda x: (x.get("vote_average", 0), x.get("popularity", 0)),
         reverse=True,
     )
     return sorted_movies[:20]
 
 
 def latest_movies(already_watched):
+    already_watched_ids = [movie_id for movie_id, _ in already_watched]
     filtered_movies = [
         movie
         for movie in movies.values()
         if movie.get("release_date")
         and movie.get("vote_count", 0) > 5000
-        and movie.get("id") not in [movie_id for movie_id, _ in already_watched]
+        and movie.get("id") not in already_watched_ids
     ]
 
     sorted_movies = sorted(
