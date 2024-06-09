@@ -1,12 +1,14 @@
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_mail import Mail
 from config import Config
 from logger import logger
 
 # Initialize Flask extensions
 db = SQLAlchemy()
 login_manager = LoginManager()
+mail = Mail()
 
 
 def create_app(config_class=Config):
@@ -30,6 +32,7 @@ def create_app(config_class=Config):
     # Initialize Flask extensions
     db.init_app(app)
     login_manager.init_app(app)
+    mail.init_app(app)
 
     # Handle unauthorized access
     @login_manager.unauthorized_handler
