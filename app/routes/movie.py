@@ -1,11 +1,12 @@
-from flask import render_template, jsonify, session, redirect, url_for
+from flask import render_template, jsonify, session, redirect, url_for, request
 from flask_login import current_user, login_required
 from app.routes import movie_bp
 from datetime import datetime
 from app.utils.helper import movie_response, get_movie_id_by_name, get_movie_trailer
 from app.utils.recommendation import recommended_movies
-from app.models import UserHistory
+from app.models import UserHistory, UserRating
 from logger import logger
+from app.utils.visited import add_movie_rating
 
 
 @movie_bp.route("/<path:movie_name>")
@@ -48,12 +49,19 @@ def movie(movie_name):
 
         movie["embed_trailer"] = "https://www.youtube.com/embed/" + f"{video_id}"
 
+        # Fetch user rating if it exists
+        user_rating = UserRating.query.filter_by(
+            user_id=current_user.id, movie_id=movie_id
+        ).first()
+        rating = user_rating.rating if user_rating else 0
+
         return render_template(
             "movie.html",
             movie=movie,
             recommended_movie=recommended_movies(
                 movie_id, already_watched=visited_movie_id
             ),
+            user_rating=rating,
         )
     except Exception as e:
         logger.error(f"Error occurred while rendering movie page: {str(e)}")
@@ -89,4 +97,32 @@ def movie_detail(movie_id):
         logger.error(f"Error occurred while fetching movie details: {str(e)}")
         return render_template(
             "error.html", error_message="Oops! Something went wrong."
+        )
+
+
+@movie_bp.route("/rating/<int:movie_id>/<int:stars>", methods=["POST"])
+@login_required
+def rate_movie(movie_id, stars):
+    """
+    Handles movie rating submissions from the frontend.
+    """
+    try:
+        # Validate rating
+        if 1 <= stars <= 5:
+            if add_movie_rating(movie_id, stars):
+                return jsonify(
+                    {
+                        "message": "Rating added/updated successfully",
+                        "new_rating": stars,
+                    }
+                )
+            else:
+                return jsonify({"error": "Failed to add/update rating"}), 500
+        else:
+            return jsonify({"error": "Invalid rating value"}), 400
+    except Exception as e:
+        logger.error(f"Error while processing rating for movie {movie_id}: {e}")
+        return (
+            jsonify({"error": "An error occurred while processing your rating."}),
+            500,
         )

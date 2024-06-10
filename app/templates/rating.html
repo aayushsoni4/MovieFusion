@@ -32,22 +32,14 @@
 </style>
 
 <body>
-    <div class="rating-container">
+    <div class="rating-container" data-movie-id="{{ movie_id }}">
         <div class="rating-stars">
-            <input type="radio" id="star1" name="rating" value="1">
-            <label for="star1" title="1 star"></label>
-            <input type="radio" id="star2" name="rating" value="2">
-            <label for="star2" title="2 stars"></label>
-            <input type="radio" id="star3" name="rating" value="3">
-            <label for="star3" title="3 stars"></label>
-            <input type="radio" id="star4" name="rating" value="4">
-            <label for="star4" title="4 stars"></label>
-            <input type="radio" id="star5" name="rating" value="5">
-            <label for="star5" title="5 stars"></label>
+            {% for i in range(1, 6) %}
+            <input type="radio" id="star{{ 6-i }}" name="rating" value="{{ 6-i }}">
+            <label for="star{{ 6-i }}" title="{{ 6-i }} star{{ 's' if i > 1 else '' }}"></label>
+            {% endfor %}
         </div>
     </div>
-
-
 </body>
 <script>
     // Get all radio buttons for rating
@@ -61,4 +53,43 @@
             console.log('User rated the movie:', selectedRating);
         });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const ratingContainer = document.querySelector('.rating-container');
+        const movieId = ratingContainer.dataset.movieId;
+        const ratingInputs = document.querySelectorAll('.rating-stars input[type="radio"]');
+
+        ratingInputs.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const selectedRating = radio.value;
+
+                // Send rating to the backend
+                fetch(`rating/${movieId}/${selectedRating}`, {
+                    method: 'POST', // Use POST for data modification
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            console.log(data.message);
+
+                            // Update the UI to reflect the new rating (example)
+                            ratingInputs.forEach(input => {
+                                input.checked = false; // Uncheck all stars
+                            });
+
+                            // Check the selected star again
+                            document.getElementById(`star${data.new_rating}`).checked = true;
+                        } else if (data.error) {
+                            console.error(data.error);
+                            // Handle error in UI
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+
 </script>
