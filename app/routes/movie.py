@@ -6,7 +6,7 @@ from app.utils.helper import movie_response, get_movie_id_by_name, get_movie_tra
 from app.utils.recommendation import recommended_movies
 from app.models import UserHistory, UserRating
 from logger import logger
-from app.utils.visited import add_movie_rating
+from app.utils.visited import add_movie_rating, add_visited_movie
 from app import db
 
 
@@ -77,6 +77,27 @@ def movie(movie_name):
             "error.html", error_message="Oops! Something went wrong."
         )
 
+
+@movie_bp.route("/history/<int:movie_id>", methods=["POST"])
+@login_required
+def history(movie_id):
+    """
+    Adds a movie to the user's visited history (now using POST).
+    """
+    try:
+        logger.info(
+            f"Movie with ID: {movie_id} was played by user: {current_user.username}"
+        )
+
+        if add_visited_movie(movie_id):
+            return jsonify({"message": "Movie added to history successfully"})
+        else:
+            return jsonify({"error": "Failed to add movie to history"}), 500 
+
+    except Exception as e:
+        error_message = "An error occurred while processing your request."
+        logger.error(f"{error_message} Error: {str(e)}")
+        return jsonify({"error": error_message}), 500
 
 @movie_bp.route("/<int:movie_id>")
 def movie_detail(movie_id):

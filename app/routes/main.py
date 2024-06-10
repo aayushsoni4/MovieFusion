@@ -3,7 +3,6 @@ from flask import render_template, jsonify, session
 from flask_login import current_user, login_required
 from app.utils.recommendation import recommended_movies
 from app.utils.helper import popular_movies, latest_movies, movie_response
-from app.utils.visited import add_visited_movie
 from app.models import UserHistory
 from app import db
 from logger import logger
@@ -79,39 +78,6 @@ def index():
         )
         logger.error(f"{error_message} Error: {str(e)}")
         return render_template("error.html", error_message=error_message), 500
-
-
-@main_bp.route("/history/<int:movie_id>", methods=["GET"])
-@login_required
-def history(movie_id):
-    """
-    Add a movie to the user's visited history.
-
-    Args:
-        movie_id (int): The unique identifier of the movie.
-
-    Returns:
-        JSON: Response indicating the movie was added to the history.
-
-    Raises:
-        Exception: If an error occurs during the process.
-
-    Notes:
-        - Logs the request for adding a movie to history.
-        - Adds the movie ID to the visited_movies session list.
-    """
-    try:
-        logger.info(
-            f"Movie with ID: {movie_id} was played by user: {current_user.username}"
-        )
-
-        add_visited_movie(movie_id)
-        return jsonify({"message": "Movie ID added to visited_movies session list"})
-
-    except Exception as e:
-        error_message = "An error occurred while processing your request."
-        logger.error(f"{error_message} Error: {str(e)}")
-        return jsonify({"error": error_message}), 500
 
 
 @main_bp.route("/history")

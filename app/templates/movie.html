@@ -266,20 +266,27 @@
             // Event listener for play button click
             $('.play-movie-btn').on('click', function () {
                 // Get the movie ID from the data attribute
-                var movieId = $(this).data('movie-id');
+                const movieId = $(this).data('movie-id');
+                console.log('Movie ID:', movieId); // Add this line for debugging
+
                 // Make an AJAX request to the Flask endpoint
-                $.ajax({
-                    type: 'GET',
-                    url: '/history/' + movieId, // Endpoint URL with movie ID parameter
-                    success: function (response) {
-                        // Handle the response if needed
-                        console.log('Movie ID sent to history endpoint');
-                    },
-                    error: function (error) {
-                        // Handle any errors
+                fetch(`history/${movieId}`, { method: 'POST' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message) {
+                            console.log(data.message);
+                        } else if (data.error) {
+                            console.error(data.error);
+                        }
+                    })
+                    .catch(error => {
                         console.error('Error sending movie ID to history endpoint:', error);
-                    }
-                });
+                    });
             });
         });
 
