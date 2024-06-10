@@ -27,16 +27,22 @@ def search(query):
         - Renders the 'search.html' template with search results.
     """
     try:
+        # Log the search page request
         logger.info(
             f"Search page requested for query: {query} by user: {current_user.username}"
         )
+
+        # Perform search based on the query
         search_results = perform_search(query)
+
+        # Render the search results page
         return render_template(
             "search.html",
             query=(" ".join(query.split("-"))),
             search_result=search_results,
         )
     except Exception as e:
+        # Log the error and display an error message
         logger.error(f"Error occurred while performing search: {str(e)}")
         return render_template(
             "error.html", error_message="Oops! Something went wrong."

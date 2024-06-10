@@ -14,7 +14,7 @@ def index():
     """
     Serve the main index page with personalized movie recommendations.
 
-    This route fetches the user's previously visited movies from the session,
+    This route fetches the user's previously visited movies from the database,
     generates recommendations based on the user's history, and displays
     popular and latest movies excluding the ones already watched.
 
@@ -27,7 +27,7 @@ def index():
     Notes:
         - Requires the user to be logged in to access the index page.
         - Logs the request for the index page.
-        - Retrieves visited movies from the session and formats them.
+        - Retrieves visited movies from the database for the current user.
         - Retrieves popular and latest movies excluding the visited ones.
         - Generates recommendations based on the user's history.
     """
@@ -94,7 +94,8 @@ def visited_movies():
 
     Notes:
         - Logs the request for retrieving visited movies.
-        - Retrieves visited movies from the session and formats them.
+        - Retrieves visited movies from the database for the current user.
+        - Formats the visited movies data for JSON response.
     """
     try:
         logger.info(f"Visited movies page requested by user: {current_user.username}")

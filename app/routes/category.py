@@ -23,6 +23,7 @@ def category(genre_name):
     Notes:
         - The route URL is "/<path:genre_name>", where "genre_name" is a dynamic parameter.
         - The user must be logged in to access this page.
+        - The genre name in the URL can contain hyphens, which are converted to spaces and capitalized.
 
     Example:
         - If the user visits "/action-movies", the genre_name will be "action movies".

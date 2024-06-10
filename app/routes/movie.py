@@ -28,9 +28,11 @@ def movie(movie_name):
     Notes:
         - Requires the user to be logged in to access the movie page.
         - Logs the request for the movie page.
-        - Retrieves visited movies from the session.
-        - Retrieves detailed information for the specified movie.
-        - Formats release date and retrieves trailer for the movie.
+        - Retrieves visited movies from the database for the current user.
+        - Retrieves detailed information for the specified movie using the movie's ID.
+        - Formats the movie's release date for display.
+        - Retrieves and embeds the movie's trailer.
+        - Fetches the user's rating for the movie, if available.
         - Renders the 'movie.html' template with movie details and recommended movies.
     """
     try:
@@ -82,7 +84,23 @@ def movie(movie_name):
 @login_required
 def history(movie_id):
     """
-    Adds a movie to the user's visited history (now using POST).
+    Adds a movie to the user's visited history (using POST method).
+
+    Args:
+        movie_id (int): The unique identifier of the movie.
+
+    Returns:
+        JSON: A JSON response indicating success or failure.
+
+    Raises:
+        Exception: If an error occurs during the process.
+
+    Notes:
+        - Requires the user to be logged in to add a movie to history.
+        - Logs the request for adding the movie to history.
+        - Calls the `add_visited_movie` function to add the movie to the user's history.
+        - Returns a success message if the movie is added successfully.
+        - Returns an error message if the process fails.
     """
     try:
         logger.info(
@@ -92,12 +110,13 @@ def history(movie_id):
         if add_visited_movie(movie_id):
             return jsonify({"message": "Movie added to history successfully"})
         else:
-            return jsonify({"error": "Failed to add movie to history"}), 500 
+            return jsonify({"error": "Failed to add movie to history"}), 500
 
     except Exception as e:
         error_message = "An error occurred while processing your request."
         logger.error(f"{error_message} Error: {str(e)}")
         return jsonify({"error": error_message}), 500
+
 
 @movie_bp.route("/<int:movie_id>")
 def movie_detail(movie_id):
@@ -115,7 +134,9 @@ def movie_detail(movie_id):
 
     Notes:
         - Logs the request for retrieving movie details.
+        - Calls the `movie_response` function to fetch movie details.
         - Returns a JSON response with movie details.
+        - Renders an error page if the process fails.
     """
     try:
         logger.info(
@@ -134,6 +155,23 @@ def movie_detail(movie_id):
 def rate_movie(movie_id, stars):
     """
     Handles movie rating submissions from the frontend.
+
+    Args:
+        movie_id (int): The unique identifier of the movie.
+        stars (int): The rating value given by the user (between 1 and 5).
+
+    Returns:
+        JSON: A JSON response indicating success or failure.
+
+    Raises:
+        Exception: If an error occurs during the process.
+
+    Notes:
+        - Requires the user to be logged in to rate a movie.
+        - Validates the rating value to ensure it is between 1 and 5.
+        - Calls the `add_movie_rating` function to add or update the movie rating.
+        - Returns a success message and the new rating if the process is successful.
+        - Returns an error message if the rating value is invalid or if the process fails.
     """
     try:
         # Validate rating
