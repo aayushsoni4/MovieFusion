@@ -68,7 +68,8 @@
                     </div>
 
                     <div class="more-about-movie" style="margin-top: 20px; padding-left:10px">
-                        {% include 'rating.html'%}
+                        {% set movie_id = movie['id'] %}
+                        {% include 'rating.html' %}
                     </div>
                 </div>
                 <!--Title-botttom==========================-->
