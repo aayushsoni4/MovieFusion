@@ -1,0 +1,64 @@
+<style>
+    .rating-stars {
+        display: inline-block;
+    }
+
+    .rating-stars input[type="radio"] {
+        display: none;
+    }
+
+    .rating-stars label {
+        font-size: 24px;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+    .rating-stars label:before {
+        content: '★';
+    }
+
+    .rating-stars input[type="radio"]:checked~label {
+        color: #ffcc00;
+    }
+
+    .rating-stars input[type="radio"]:hover~label,
+    .rating-stars input[type="radio"]:checked~label:hover {
+        color: #ffcc00;
+    }
+
+    .rating-stars {
+        direction: rtl;
+    }
+</style>
+
+<body>
+    <div class="rating-container">
+        <div class="rating-stars">
+            <input type="radio" id="star1" name="rating" value="1">
+            <label for="star1" title="1 star"></label>
+            <input type="radio" id="star2" name="rating" value="2">
+            <label for="star2" title="2 stars"></label>
+            <input type="radio" id="star3" name="rating" value="3">
+            <label for="star3" title="3 stars"></label>
+            <input type="radio" id="star4" name="rating" value="4">
+            <label for="star4" title="4 stars"></label>
+            <input type="radio" id="star5" name="rating" value="5">
+            <label for="star5" title="5 stars"></label>
+        </div>
+    </div>
+
+
+</body>
+<script>
+    // Get all radio buttons for rating
+    const ratingInputs = document.querySelectorAll('.rating-stars input[type="radio"]');
+
+    // Add event listener to each radio button
+    ratingInputs.forEach(radio => {
+        radio.addEventListener('change', () => {
+            // Perform action when a rating is selected (e.g., send to server, update UI)
+            const selectedRating = radio.value;
+            console.log('User rated the movie:', selectedRating);
+        });
+    });
+</script>

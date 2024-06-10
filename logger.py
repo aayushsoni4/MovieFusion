@@ -22,7 +22,7 @@ logger.setLevel(log_level)
 # Create handlers
 console_handler = logging.StreamHandler()
 file_handler = RotatingFileHandler(
-    "app.log", maxBytes=1024 * 20, backupCount=10  # 20 KB
+    "app.log", maxBytes=1024 * 1024, backupCount=10  # 1 MB
 )
 
 # Create formatters and add it to handlers
