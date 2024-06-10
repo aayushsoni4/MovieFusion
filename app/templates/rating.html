@@ -32,10 +32,12 @@
 </style>
 
 <body>
-    <div class="rating-container" data-movie-id="{{ movie_id }}">
+    <div class="rating-container" data-movie-id="{{ movie_id }}" data-rating="{{ user_rating }}">
         <div class="rating-stars">
             {% for i in range(1, 6) %}
-            <input type="radio" id="star{{ 6-i }}" name="rating" value="{{ 6-i }}">
+            <input type="radio" id="star{{ 6-i }}" name="rating" value="{{ 6-i }}" {% if user_rating and 6-user_rating>=
+            i
+            %} checked {% endif %}>
             <label for="star{{ 6-i }}" title="{{ 6-i }} star{{ 's' if i > 1 else '' }}"></label>
             {% endfor %}
         </div>

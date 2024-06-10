@@ -68,7 +68,8 @@
                     </div>
 
                     <div class="more-about-movie" style="margin-top: 20px; padding-left:10px">
-                        {% set movie_id = movie['id'], stars = user_rating %}
+                        {% set movie_id = movie['id']%}
+                        {% set user_rating = rating %}
                         {% include 'rating.html' with context %}
                     </div>
                 </div>

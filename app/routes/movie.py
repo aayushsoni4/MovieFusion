@@ -7,6 +7,7 @@ from app.utils.recommendation import recommended_movies
 from app.models import UserHistory, UserRating
 from logger import logger
 from app.utils.visited import add_movie_rating
+from app import db
 
 
 @movie_bp.route("/<path:movie_name>")
@@ -37,7 +38,14 @@ def movie(movie_name):
             f"Movie page requested for: {movie_name} by user: {current_user.username}"
         )
 
-        visited_movie_id = session.get("visited_movies", [])
+        # Fetch visited movies from the database, ordered by watched_at
+        visited_movie_id = (
+            db.session.query(UserHistory.movie_id, UserHistory.watched_at)
+            .filter_by(user_id=current_user.id)
+            .order_by(UserHistory.watched_at.desc())
+            .all()
+        )
+
         movie_id = get_movie_id_by_name(movie_name)
         movie = movie_response(movie_id=movie_id)
         movie["release"] = datetime.strptime(
@@ -51,7 +59,7 @@ def movie(movie_name):
 
         # Fetch user rating if it exists
         user_rating = UserRating.query.filter_by(
-            user_id=current_user.id, movie_id=movie_id
+            user_id=current_user.id, movie_id=int(float(movie_id))
         ).first()
         rating = user_rating.rating if user_rating else 0
 
@@ -61,7 +69,7 @@ def movie(movie_name):
             recommended_movie=recommended_movies(
                 movie_id, already_watched=visited_movie_id
             ),
-            user_rating=rating,
+            rating=rating,
         )
     except Exception as e:
         logger.error(f"Error occurred while rendering movie page: {str(e)}")
