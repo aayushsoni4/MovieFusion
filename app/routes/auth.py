@@ -5,12 +5,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
 from logger import logger
 from app import db
+from datetime import datetime, timedelta, timezone
 from app.utils.verification import (
     add_user,
     send_otp,
     otp,
     activate_user,
     generate_token,
+    send_password_reset_email,
 )
 
 
@@ -78,14 +80,132 @@ def login():
 @auth_bp.route("/forgot_password", methods=["POST", "GET"])
 def forgot_password():
     """
-    Placeholder for forgot password functionality.
+    Handle password reset requests.
 
-    GET/POST: Currently, returns a simple message.
+    GET: Serve the forgot password page.
+    POST: Process the password reset request and send a password reset email if the user exists.
 
     Returns:
-        A simple HTML message indicating the placeholder.
+        On GET: Rendered 'forgot_password.html' template.
+        On POST: Redirect to 'auth.login' with a success message if the email is sent,
+        otherwise render 'forgot_password.html' with an error message.
+
+    Notes:
+        - This route is accessible only to non-authenticated users.
+        - Logs successful and failed password reset attempts.
     """
-    return "<h1>Forgot Password</h1>"
+    # Check if the user is already logged in
+    if current_user.is_authenticated:
+        return redirect(url_for("main.profile"))
+
+    if request.method == "POST":
+        email_or_name = request.form.get("email")
+
+        # Assume you have a User model with an email field
+        user = User.query.filter_by(email=email_or_name).first()
+        if user:
+            # Generate a unique token with a 15-minute expiration
+            token = generate_token()
+
+            # Store the token and user information (e.g., user ID) in a secure way
+            session["reset_token"] = token
+            session["reset_token_expiration"] = datetime.now(timezone.utc) + timedelta(
+                minutes=15
+            )
+            session["user_id_to_reset"] = user.id
+            session.permanent = True  # Set the session to be permanent
+
+            # Send the password reset email
+            if send_password_reset_email(user.email, token):
+                flash(
+                    "Password reset email sent successfully. Check your inbox.",
+                    "success",
+                )
+                return redirect(url_for("auth.login"))
+            else:
+                flash(
+                    "Error sending password reset email. Please try again later.",
+                    "error",
+                )
+                return redirect(url_for("auth.forgot_password"))
+        else:
+            # Flash a message if no account found with the provided email or username
+            flash("No account found with that email or username.", "warning")
+            return redirect(url_for("auth.forgot_password"))
+
+    return render_template("forgot_password.html")
+
+
+@auth_bp.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    """
+    Handle the password reset process.
+
+    GET: Serve the reset password page.
+    POST: Validate the token and update the user's password if the token is valid and not expired.
+
+    Args:
+        token (str): The password reset token.
+
+    Returns:
+        On GET: Rendered 'reset_password.html' template.
+        On POST: Redirect to 'auth.login' with a success message if the password is reset,
+        otherwise render 'reset_password.html' with an error message.
+
+    Notes:
+        - This route is accessible only to non-authenticated users.
+        - Logs successful and failed password reset attempts.
+    """
+    # Validate the token and check its expiration
+    if token == session.get("reset_token"):
+        expiration_timestamp = session.get("reset_token_expiration")
+
+        # Check if the token has expired
+        if (
+            expiration_timestamp
+            and datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
+            > expiration_timestamp
+        ):
+            flash("Token has expired. Please request a new password reset.", "error")
+            return redirect(url_for("auth.forgot_password"))
+
+        # Retrieve the user ID associated with the token
+        user_id = session.get("user_id_to_reset")
+        user = User.query.filter_by(id=user_id).first()
+        if user:
+            if request.method == "POST":
+                new_password = request.form.get("new_password")
+                confirm_new_password = request.form.get("confirm_new_password")
+
+                # Check if the new password and confirm password match
+                if new_password != confirm_new_password:
+                    flash("Passwords do not match. Please try again.", "error")
+                    return render_template("reset_password.html", token=token)
+
+                # Check password strength (optional, but recommended)
+                if len(new_password) < 8:
+                    flash("Password must be at least 8 characters long.", "error")
+                    return render_template("reset_password.html", token=token)
+
+                # Update the user's password in the database
+                user.password_hash = generate_password_hash(new_password)
+                db.session.commit()
+
+                # Clear the session variables after successful password reset
+                session.pop("reset_token", None)
+                session.pop("reset_token_expiration", None)
+                session.pop("user_id_to_reset", None)
+
+                flash(
+                    "Password reset successful. You can now log in with your new password.",
+                    "success",
+                )
+                return redirect(url_for("auth.login"))
+
+            return render_template("reset_password.html", token=token)
+
+    flash("Invalid or expired token. Please try again.", "error")
+    return redirect(url_for("auth.forgot_password"))
 
 
 @auth_bp.route("/resend_otp", methods=["GET"])
@@ -128,7 +248,6 @@ def resend_otp():
             db.session.delete(user)
             db.session.commit()
 
-        # Redirect to the registration page in case of failure
         return redirect(url_for("auth.register"))
 
 
@@ -159,6 +278,17 @@ def register():
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+
+        # Validate password and confirm password
+        if password != confirm_password:
+            flash("Passwords do not match. Please try again.", "error")
+            return redirect(url_for("auth.register"))
+
+        # Check password strength
+        if len(password) < 8:
+            flash("Password must be at least 8 characters long.", "error")
+            return redirect(url_for("auth.register"))
 
         # Check if username or email already exists
         existing_user_username = User.query.filter_by(username=username).first()
@@ -229,12 +359,15 @@ def validate_user():
                 user = User.query.filter_by(email=email).first()
                 login_user(user)
                 session.pop("email", None)
+                flash("User activated successfully.", "success")
                 return redirect(url_for("main.index"))
             else:
                 flash("Error activating user.", "error")
+                logger.error(f"Error activating user with email {email}.")
                 return redirect(url_for("auth.validate_user"))
         else:
             flash("Invalid OTP.", "error")
+            logger.warning(f"Invalid OTP entered for email {email}.")
             return redirect(url_for("auth.validate_user"))
 
     return render_template("validate_user.html")
@@ -255,5 +388,5 @@ def logout():
     """
     logout_user()
     flash("You have been logged out. See you soon!", "info")
-    logger.info("User logged out.")
+    logger.info(f"User {current_user.username} logged out.")
     return redirect(url_for("auth.login"))
