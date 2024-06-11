@@ -294,6 +294,9 @@
     <script>
         function submitSearch() {
             var searchQuery = document.getElementById('search-input').value;
+            if (!searchQuery) {
+                return;
+            }
             var slugifiedQuery = slugify(searchQuery);
             window.location.href = '/search/' + encodeURIComponent(slugifiedQuery);
         }
