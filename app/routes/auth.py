@@ -74,7 +74,7 @@ def login():
             flash("User not found. Please check your credentials.", "error")
             logger.warning(f"Login attempt failed: user {username} not found.")
 
-    return render_template("login.html")
+    return render_template("auth/login.html")
 
 
 @auth_bp.route("/forgot_password", methods=["POST", "GET"])
@@ -133,7 +133,7 @@ def forgot_password():
             flash("No account found with that email or username.", "warning")
             return redirect(url_for("auth.forgot_password"))
 
-    return render_template("forgot_password.html")
+    return render_template("auth/forgot_password.html")
 
 
 @auth_bp.route("/reset_password/<token>", methods=["GET", "POST"])
@@ -180,12 +180,12 @@ def reset_password(token):
                 # Check if the new password and confirm password match
                 if new_password != confirm_new_password:
                     flash("Passwords do not match. Please try again.", "error")
-                    return render_template("reset_password.html", token=token)
+                    return render_template("auth/reset_password.html", token=token)
 
                 # Check password strength (optional, but recommended)
                 if len(new_password) < 8:
                     flash("Password must be at least 8 characters long.", "error")
-                    return render_template("reset_password.html", token=token)
+                    return render_template("auth/reset_password.html", token=token)
 
                 # Update the user's password in the database
                 user.password_hash = generate_password_hash(new_password)
@@ -202,7 +202,7 @@ def reset_password(token):
                 )
                 return redirect(url_for("auth.login"))
 
-            return render_template("reset_password.html", token=token)
+            return render_template("auth/reset_password.html", token=token)
 
     flash("Invalid or expired token. Please try again.", "error")
     return redirect(url_for("auth.forgot_password"))
@@ -321,7 +321,7 @@ def register():
                 flash("Registration failed.", "error")
                 return redirect(url_for("auth.register"))
 
-    return render_template("register.html")
+    return render_template("auth/register.html")
 
 
 @auth_bp.route("/validate_user", methods=["POST", "GET"])
@@ -370,7 +370,7 @@ def validate_user():
             logger.warning(f"Invalid OTP entered for email {email}.")
             return redirect(url_for("auth.validate_user"))
 
-    return render_template("validate_user.html")
+    return render_template("auth/validate_user.html")
 
 
 @auth_bp.route("/logout")

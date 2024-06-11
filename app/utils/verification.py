@@ -55,7 +55,7 @@ def send_otp(email):
     try:
         token = otp.now()
         subject = "Welcome to MovieFusion! Let's Get Started"
-        message_body = render_template("email_templates/otp_email.html", token=token)
+        message_body = render_template("email/otp_email.html", token=token)
 
         msg = Message(subject, recipients=[email], html=message_body)
         mail.send(msg)
@@ -116,7 +116,7 @@ def send_password_reset_email(email, token):
     try:
         subject = "Password Reset Request for MovieFusion"
         message_body = render_template(
-            "email_templates/password_reset_email.html", reset_link=reset_link
+            "email/password_reset_email.html", reset_link=reset_link
         )
 
         msg = Message(subject, recipients=[email], html=message_body)
