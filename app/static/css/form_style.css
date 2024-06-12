@@ -146,6 +146,14 @@ section .signin .content .form .inputBox i {
 
 .signin .content .form .links a {
     color: #dedcdc;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.1s;
+}
+
+.signin .content .form .links a:hover {
+    color: #e70634;
+    font-weight: 500;
     text-decoration: none;
 }
 
