@@ -1,80 +1,89 @@
 <head>
-    <title>Login | MovieFusion</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/fav-icon.png') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form_style.css') }}" />
+  <title>Login | MovieFusion</title>
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='images/fav-icon.png') }}"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/form_style.css') }}"
+  />
 </head>
 
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-    <section>
-        <section id="container"></section>
-        <div class="signin">
-            <div class="content">
-                <h2>OTP Validation</h2>
-                <div class="form">
-                    <form action="{{url_for('auth.validate_user')}}" method="post">
-                        <div class="inputBox">
-                            <input type="text" name="otp" required> <i>OTP</i>
-                        </div>
-                        <div class="links" style="margin-top: 5%;">
-                            <p id="resend_otp" style="font-weight: 500;" disabled>Resend OTP</p>
-                            <p id="timer"></p>
-                        </div>
-                        <div class="inputBox" style="margin-top: 5%;">
-                            <input type="submit" value="Login">
-                        </div>
-                    </form>
-                </div>
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">
+    {{ message }}
+  </div>
+  {% endfor %} {% endif %} {% endwith %}
+  <section>
+    <section id="container"></section>
+    <div class="signin">
+      <div class="content">
+        <h2>OTP Validation</h2>
+        <div class="form">
+          <form action="{{ url_for('auth.validate_user') }}" method="post">
+            <div class="inputBox">
+              <input type="text" name="otp" required /> <i>OTP</i>
             </div>
+            <div class="links" style="margin-top: 5%">
+              <p id="resend_otp" style="font-weight: 500" disabled>
+                Resend OTP
+              </p>
+              <p id="timer"></p>
+            </div>
+            <div class="inputBox" style="margin-top: 5%">
+              <button type="submit">
+                Login {% include 'auth/submit_button.html' %}
+              </button>
+            </div>
+          </form>
         </div>
-    </section>
-    <script>
-        const numberOfSpans = 1000;
-        const container = document.getElementById('container');
-        for (let i = 0; i < numberOfSpans; i++) {
-            const span = document.createElement('span');
-            container.appendChild(span);
-        }
-        setTimeout(function () {
-            const alertElement = document.querySelector('.alert');
-            if (alertElement) {
-                alertElement.classList.add('hide');
-            }
-        }, 5000);
+      </div>
+    </div>
+  </section>
+  <script>
+    const numberOfSpans = 1000
+    const container = document.getElementById('container')
+    for (let i = 0; i < numberOfSpans; i++) {
+      const span = document.createElement('span')
+      container.appendChild(span)
+    }
+    setTimeout(function () {
+      const alertElement = document.querySelector('.alert')
+      if (alertElement) {
+        alertElement.classList.add('hide')
+      }
+    }, 5000)
 
-        let timeLeft = 15;
-        const timerElement = document.getElementById('timer');
-        const resendElement = document.getElementById('resend_otp');
+    let timeLeft = 15
+    const timerElement = document.getElementById('timer')
+    const resendElement = document.getElementById('resend_otp')
 
-        function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60)
+      const seconds = timeLeft % 60
 
-            timerElement.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      timerElement.innerText = `${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`
 
-            if (timeLeft > 0) {
-                timeLeft--;
-                setTimeout(updateTimer, 1000); // Update every second
-            } else {
-                // Create a new anchor tag
-                const resendLink = document.createElement('a');
-                resendLink.href = "{{url_for('auth.resend_otp')}}";
-                resendLink.innerText = 'Resend OTP';
-                resendLink.style.color = "#e70634";
-                resendLink.style.fontWeight = "500";
-                // Replace the <p> tag with the new <a> tag
-                resendElement.parentNode.replaceChild(resendLink, resendElement);
-            }
-        }
+      if (timeLeft > 0) {
+        timeLeft--
+        setTimeout(updateTimer, 1000) // Update every second
+      } else {
+        // Create a new anchor tag
+        const resendLink = document.createElement('a')
+        resendLink.href = "{{url_for('auth.resend_otp')}}"
+        resendLink.innerText = 'Resend OTP'
+        resendLink.style.color = '#e70634'
+        resendLink.style.fontWeight = '500'
+        // Replace the <p> tag with the new <a> tag
+        resendElement.parentNode.replaceChild(resendLink, resendElement)
+      }
+    }
 
-        updateTimer(); // Start the timer
-    </script>
+    updateTimer() // Start the timer
+  </script>
 </body>

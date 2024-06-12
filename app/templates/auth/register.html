@@ -1,62 +1,68 @@
 <head>
-    <title>Register | MovieFusion</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/fav-icon.png') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form_style.css') }}" />
+  <title>Register | MovieFusion</title>
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='images/fav-icon.png') }}"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/form_style.css') }}"
+  />
 </head>
 
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-    <section>
-        <section id="container"></section>
-        <div class="signin">
-            <div class="content">
-                <h2>Sign Up</h2>
-                <div class="form">
-                    <form action="{{ url_for('auth.register') }}" method="post">
-                        <div class="inputBox">
-                            <input type="text" name="username" required> <i>Username</i>
-                        </div>
-                        <div class="inputBox" style="margin-top: 5%;">
-                            <input type="email" name="email" required> <i>Email</i>
-                        </div>
-                        <div class="inputBox" style="margin-top: 5%;">
-                            <input type="password" name="password" required> <i>Password</i>
-                        </div>
-                        <div class="inputBox" style="margin-top: 5%;">
-                            <input type="password" name="confirm_password" required> <i>Confirm Password</i>
-                        </div>
-                        <div class="links" style="margin-top: 5%;">
-                            <p>Already have an account?</p>
-                            <a href="{{ url_for('auth.login') }}">Sign In</a>
-                        </div>
-                        <div class="inputBox" style="margin-top: 5%;">
-                            <input type="submit" value="Register">
-                        </div>
-                    </form>
-                </div>
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">
+    {{ message }}
+  </div>
+  {% endfor %} {% endif %} {% endwith %}
+  <section>
+    <section id="container"></section>
+    <div class="signin">
+      <div class="content">
+        <h2>Sign Up</h2>
+        <div class="form">
+          <form action="{{ url_for('auth.register') }}" method="post">
+            <div class="inputBox">
+              <input type="text" name="username" required /> <i>Username</i>
             </div>
+            <div class="inputBox" style="margin-top: 5%">
+              <input type="email" name="email" required /> <i>Email</i>
+            </div>
+            <div class="inputBox" style="margin-top: 5%">
+              <input type="password" name="password" required /> <i>Password</i>
+            </div>
+            <div class="inputBox" style="margin-top: 5%">
+              <input type="password" name="confirm_password" required />
+              <i>Confirm Password</i>
+            </div>
+            <div class="links" style="margin-top: 5%">
+              <p>Already have an account?</p>
+              <a href="{{ url_for('auth.login') }}">Sign In</a>
+            </div>
+            <div class="inputBox" style="margin-top: 5%">
+              <button type="submit">
+                Register {% include 'auth/submit_button.html' %}
+              </button>
+            </div>
+          </form>
         </div>
-    </section>
-    <script>
-        const numberOfSpans = 1000;
-        const container = document.getElementById('container');
-        for (let i = 0; i < numberOfSpans; i++) {
-            const span = document.createElement('span');
-            container.appendChild(span);
-        }
-        setTimeout(function () {
-            const alertElement = document.querySelector('.alert');
-            if (alertElement) {
-                alertElement.classList.add('hide');
-            }
-        }, 5000);
-    </script>
+      </div>
+    </div>
+  </section>
+  <script>
+    const numberOfSpans = 1000
+    const container = document.getElementById('container')
+    for (let i = 0; i < numberOfSpans; i++) {
+      const span = document.createElement('span')
+      container.appendChild(span)
+    }
+    setTimeout(function () {
+      const alertElement = document.querySelector('.alert')
+      if (alertElement) {
+        alertElement.classList.add('hide')
+      }
+    }, 5000)
+  </script>
 </body>
