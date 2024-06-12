@@ -1,4 +1,8 @@
 from app.utils.helper import movie_response
+from flask_login import current_user
+from app.models import UserHistory
+from collections import defaultdict
+from app import db
 import pickle
 import os
 
@@ -31,10 +35,14 @@ features_similarity_dataset_path = os.path.join(
 items_similarity_dataset_path = os.path.join(
     current_dir, "..", "..", "models", "items_similarity.pkl"
 )
+similarity_score_dataset_path = os.path.join(
+    current_dir, "..", "..", "models", "similarity_scores.pkl"
+)
 
 # Load similarity models
 features_similarity = load_model(features_similarity_dataset_path)
 items_similarity = load_model(items_similarity_dataset_path)
+similarity_score = load_model(similarity_score_dataset_path)
 
 
 def recommended_movies(movie_id, already_watched):
@@ -55,3 +63,61 @@ def recommended_movies(movie_id, already_watched):
     ][:12]
     movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
     return movies
+
+
+def recommend_movies_based_on_genre(target_genre_name, already_watched):
+    """
+    Recommend movies based on the target genre, excluding those already watched.
+
+    Args:
+        target_genre_name (str): The name of the target genre.
+        already_watched (list): A list of tuples containing movie IDs and their corresponding similarity scores.
+
+    Returns:
+        list: A list of recommended movie IDs.
+    """
+    visited_movie_ids = (
+        db.session.query(UserHistory.movie_id, UserHistory.watched_at)
+        .filter_by(user_id=current_user.id)
+        .order_by(UserHistory.watched_at.desc())
+        .all()
+    )
+    visited_movie_ids_genre = []
+
+    # Filter visited movie IDs by genre
+    for movie_id, _ in visited_movie_ids:
+        movie = movie_response(movie_id)
+        if any(
+            target_genre_name.lower() == genre.get("name", "").lower()
+            for genre in movie.get("genres", [])
+        ):
+            visited_movie_ids_genre.append(movie_id)
+
+    recommendation_scores = defaultdict(list)
+
+    # Calculate average similarity scores for recommended movies
+    for movie_id in visited_movie_ids_genre:
+        recommendations = similarity_score.get(movie_id, None)
+        for recommended_movie_id, sim_score in recommendations:
+            recommendation_scores[recommended_movie_id].append(sim_score)
+
+    average_scores = {
+        movie_id: sum(scores) / len(scores)
+        for movie_id, scores in recommendation_scores.items()
+    }
+
+    sorted_recommendations = sorted(
+        average_scores.items(), key=lambda x: x[1], reverse=True
+    )
+
+    recommended_movies = []
+    already_watched_ids = [watched_id for watched_id, _ in already_watched]
+    for movie_id, _ in sorted_recommendations:
+        if movie_id not in already_watched_ids:
+            movie_data = movie_response(movie_id)
+            if movie_data:
+                recommended_movies.append(movie_data)
+            if len(recommended_movies) == 20:
+                break
+
+    return recommended_movies
