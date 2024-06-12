@@ -103,11 +103,10 @@ def history(movie_id):
         - Returns an error message if the process fails.
     """
     try:
-        logger.info(
-            f"Movie with ID: {movie_id} was played by user: {current_user.username}"
-        )
-
         if add_visited_movie(movie_id):
+            logger.info(
+                f"Movie with ID: {movie_id} was added to the history by user: {current_user.username}"
+            )
             return jsonify({"message": "Movie added to history successfully"})
         else:
             return jsonify({"error": "Failed to add movie to history"}), 500

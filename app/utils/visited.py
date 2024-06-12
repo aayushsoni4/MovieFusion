@@ -7,13 +7,13 @@ from app import db
 
 def add_visited_movie(movie_id):
     """
-    Adds a movie to the currently logged-in user's viewing history in the database.
+    Add a movie to the viewing history of the current user.
 
     Args:
-        movie_id (int): The ID of the movie to be added.
+        movie_id (int): The ID of the movie to be added to the history.
 
     Returns:
-        bool: True if the movie was successfully added to the history, False otherwise.
+        bool: True if the movie was successfully added, False otherwise.
     """
     try:
         # Create a new UserHistory record
@@ -23,7 +23,7 @@ def add_visited_movie(movie_id):
             watched_at=datetime.now(),
         )
 
-        # Add to the database and commit changes
+        # Add the entry to the database and commit changes
         db.session.add(new_history_entry)
         db.session.commit()
 
@@ -41,7 +41,7 @@ def add_visited_movie(movie_id):
 
 def add_movie_rating(movie_id, rating):
     """
-    Adds or updates the rating for a movie by the currently logged-in user.
+    Add or update the rating for a movie by the current user.
 
     Args:
         movie_id (int): The ID of the movie to be rated.

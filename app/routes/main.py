@@ -1,11 +1,16 @@
-from app.routes import main_bp
-from flask import render_template, jsonify, session
+from flask import render_template, jsonify
 from flask_login import current_user, login_required
-from app.utils.recommendation import recommended_movies
-from app.utils.helper import popular_movies, latest_movies, movie_response
+from app.utils.recommendation import recommended_movies, recommend_movies_based_on_genre
 from app.models import UserHistory
-from app import db
 from logger import logger
+from app.routes import main_bp
+from app import db
+from app.utils.helper import (
+    popular_movies,
+    latest_movies,
+    movie_response,
+    most_watched_genres,
+)
 
 
 @main_bp.route("/")
@@ -30,6 +35,7 @@ def index():
         - Retrieves visited movies from the database for the current user.
         - Retrieves popular and latest movies excluding the visited ones.
         - Generates recommendations based on the user's history.
+        - Includes recommendations based on the user's most-watched genres.
     """
     try:
         # Log the index page request
@@ -63,6 +69,14 @@ def index():
                 visited_movie_id[0][0], already_watched=visited_movie_id
             )
 
+        # Recommend movies based on the user's most-watched genres
+        most_watched_genres_name = most_watched_genres()
+        most_watched_genres_movie = []
+        for genre in most_watched_genres_name:
+            most_watched_genres_movie.append(
+                recommend_movies_based_on_genre(genre, visited_movie_id)
+            )
+
         return render_template(
             "index.html",
             popular_movie=popular_movie,
@@ -70,9 +84,12 @@ def index():
             visited_movie=visited_movie,
             watched_title=visited_movie[0]["title"] if visited_movie else None,
             because_you_watch=because_you_watch,
+            most_watched_genres_name=most_watched_genres_name,
+            recommendations_by_genre=most_watched_genres_movie,
         )
 
     except Exception as e:
+        # Handle any errors that occur during rendering
         error_message = (
             "An error occurred while rendering the index page. Please try again later."
         )
@@ -98,9 +115,10 @@ def visited_movies():
         - Formats the visited movies data for JSON response.
     """
     try:
+        # Log the request for visited movies
         logger.info(f"Visited movies page requested by user: {current_user.username}")
 
-        # Fetch visited movies from the database, ordered by watched_at
+        # Fetch visited movies from the database
         visited_movies = (
             db.session.query(UserHistory.movie_id, UserHistory.watched_at)
             .filter_by(user_id=current_user.id)
@@ -108,7 +126,7 @@ def visited_movies():
             .all()
         )
 
-        # Convert to list of dictionaries
+        # Convert visited movies data to JSON format
         visited_movie_list = [
             {
                 "movie_id": movie_id,
@@ -119,6 +137,7 @@ def visited_movies():
         return jsonify({"visited_movies": visited_movie_list})
 
     except Exception as e:
+        # Handle any errors that occur during retrieval
         error_message = (
             "An error occurred while retrieving visited movies. Please try again later."
         )
