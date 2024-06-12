@@ -386,7 +386,8 @@ def logout():
         - This route is accessible only to authenticated users.
         - Logs the logout event.
     """
+    username = current_user.username
     logout_user()
     flash("You have been logged out. See you soon!", "info")
-    logger.info(f"User {current_user.username} logged out.")
+    logger.info(f"User {username} logged out.")
     return redirect(url_for("auth.login"))
