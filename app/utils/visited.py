@@ -7,32 +7,46 @@ from app import db
 
 def add_visited_movie(movie_id):
     """
-    Add a movie to the viewing history of the current user.
+    Add a movie to the viewing history of the current user, or update the watched_at time if it already exists.
 
     Args:
         movie_id (int): The ID of the movie to be added to the history.
 
     Returns:
-        bool: True if the movie was successfully added, False otherwise.
+        bool: True if the movie was successfully added or updated, False otherwise.
     """
     try:
-        # Create a new UserHistory record
-        new_history_entry = UserHistory(
-            user_id=current_user.id,
-            movie_id=int(float(movie_id)),
-            watched_at=datetime.now(),
-        )
+        # Convert movie_id to int
+        movie_id = int(movie_id)
 
-        # Add the entry to the database and commit changes
-        db.session.add(new_history_entry)
+        # Check if the movie is already in the user's history
+        history_entry = UserHistory.query.filter_by(
+            user_id=current_user.id, movie_id=movie_id
+        ).first()
+
+        if history_entry:
+            # If the entry exists, update the watched_at time
+            history_entry.watched_at = datetime.now()
+            action = "updated"
+        else:
+            # If the entry does not exist, create a new one
+            new_history_entry = UserHistory(
+                user_id=current_user.id,
+                movie_id=movie_id,
+                watched_at=datetime.now(),
+            )
+            db.session.add(new_history_entry)
+            action = "added"
+
+        # Commit changes to the database
         db.session.commit()
 
-        logger.info(f"Movie {movie_id} added to history for user {current_user.id}")
+        logger.info(f"Movie {movie_id} {action} in history for user {current_user.id}")
         return True
     except Exception as e:
         # Log any exceptions that occur
         logger.error(
-            f"Failed to add movie {movie_id} to history for user {current_user.id}: {e}"
+            f"Failed to add or update movie {movie_id} in history for user {current_user.id}: {e}"
         )
         # Rollback the session in case of error
         db.session.rollback()
