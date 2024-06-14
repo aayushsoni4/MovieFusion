@@ -16,18 +16,21 @@ def add_visited_movie(movie_id):
         bool: True if the movie was successfully added or updated, False otherwise.
     """
     try:
-        # Convert movie_id to int
-        movie_id = int(movie_id)
-
         # Check if the movie is already in the user's history
         history_entry = UserHistory.query.filter_by(
             user_id=current_user.id, movie_id=movie_id
         ).first()
+        logger.debug(
+            f"History entry fetched for user {current_user.id} and movie {movie_id}: {history_entry}"
+        )
 
         if history_entry:
             # If the entry exists, update the watched_at time
             history_entry.watched_at = datetime.now()
             action = "updated"
+            logger.info(
+                f"Existing history entry found, updating watched_at time for movie {movie_id}"
+            )
         else:
             # If the entry does not exist, create a new one
             new_history_entry = UserHistory(
@@ -37,10 +40,10 @@ def add_visited_movie(movie_id):
             )
             db.session.add(new_history_entry)
             action = "added"
+            logger.info(f"New history entry created for movie {movie_id}")
 
         # Commit changes to the database
         db.session.commit()
-
         logger.info(f"Movie {movie_id} {action} in history for user {current_user.id}")
         return True
     except Exception as e:
@@ -69,11 +72,17 @@ def add_movie_rating(movie_id, rating):
         user_rating = UserRating.query.filter_by(
             user_id=current_user.id, movie_id=movie_id
         ).first()
+        logger.debug(
+            f"User rating fetched for user {current_user.id} and movie {movie_id}: {user_rating}"
+        )
 
         if user_rating:
             # Update the existing rating
             user_rating.rating = rating
             user_rating.rated_at = datetime.now()
+            logger.info(
+                f"Existing rating found, updating rating to {rating} for movie {movie_id}"
+            )
         else:
             # Create a new rating entry
             user_rating = UserRating(
@@ -83,10 +92,12 @@ def add_movie_rating(movie_id, rating):
                 rated_at=datetime.now(),
             )
             db.session.add(user_rating)
+            logger.info(
+                f"New rating entry created for movie {movie_id} with rating {rating}"
+            )
 
         # Commit the changes to the database
         db.session.commit()
-
         logger.info(
             f"Rating {rating} added for movie {movie_id} by user {current_user.id}"
         )
