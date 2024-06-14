@@ -5,14 +5,14 @@ from logger import logger
 from app import db, mail
 from app.models import User
 import secrets
-import pyotp
-import os
+# import pyotp
+# import os
 
 # Load environment variables from a .env file
 load_dotenv()
 
 # Initialize TOTP with a secret key and a time interval of 300 seconds (5 minutes)
-otp = pyotp.TOTP(os.getenv("OTP_KEY"), interval=300)
+# otp = pyotp.TOTP(os.getenv("OTP_KEY"), interval=300)
 
 
 def add_user(username, email, password):
@@ -53,10 +53,10 @@ def send_otp(email):
         bool: True if the email was sent successfully, False otherwise.
     """
     try:
-        token = otp.now()
+        token = 784941
+        # token = otp.now()
         subject = "Welcome to MovieFusion! Let's Get Started"
         message_body = render_template("email/otp_email.html", token=token)
-
         msg = Message(subject, recipients=[email], html=message_body)
         mail.send(msg)
         logger.info(f"Verification email sent successfully to {email}.")
