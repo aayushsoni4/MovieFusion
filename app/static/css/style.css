@@ -419,6 +419,10 @@ body {
     transition: all ease 0.3s;
 }
 
+.swiper-slide{
+    min-width: 250px;
+}
+
 /* Year, title, and genres styles */
 .movie-poster .movie-name span,
 .movie-poster .movie-name a,
