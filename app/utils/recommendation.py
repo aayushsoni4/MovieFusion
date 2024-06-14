@@ -61,7 +61,7 @@ def recommended_movies(movie_id, already_watched):
     recommended_movie = [
         id for id in recommended_movie if id not in already_watched_ids
     ][:12]
-    movies = [movie_response(int(float(movie_id))) for movie_id in recommended_movie]
+    movies = [movie_response(movie_id) for movie_id in recommended_movie]
     return movies
 
 

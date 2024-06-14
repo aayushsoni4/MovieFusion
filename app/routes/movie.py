@@ -61,7 +61,7 @@ def movie(movie_name):
 
         # Fetch user rating if it exists
         user_rating = UserRating.query.filter_by(
-            user_id=current_user.id, movie_id=int(float(movie_id))
+            user_id=current_user.id, movie_id=movie_id
         ).first()
         rating = user_rating.rating if user_rating else 0
 

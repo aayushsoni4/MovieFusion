@@ -67,7 +67,7 @@ def add_movie_rating(movie_id, rating):
     try:
         # Check if the user has already rated this movie
         user_rating = UserRating.query.filter_by(
-            user_id=current_user.id, movie_id=int(float(movie_id))
+            user_id=current_user.id, movie_id=movie_id
         ).first()
 
         if user_rating:
