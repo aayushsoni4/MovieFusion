@@ -5,6 +5,7 @@ from collections import defaultdict
 from app import db
 import pickle
 import os
+from logger import logger
 
 
 def load_model(file_path):
@@ -21,9 +22,13 @@ def load_model(file_path):
     try:
         with open(file_path, "rb") as f:
             similarity = pickle.load(f)
+        logger.info(f"Loaded model from {file_path}")
         return similarity
     except FileNotFoundError:
-        print("Error: File not found.")
+        logger.error(f"Error: File not found at {file_path}")
+        return {}
+    except Exception as e:
+        logger.error(f"Error loading model from {file_path}: {e}")
         return {}
 
 
@@ -56,13 +61,24 @@ def recommended_movies(movie_id, already_watched):
     Returns:
         list: A list of recommended movies.
     """
-    recommended_movie = features_similarity.get(movie_id, [])
-    already_watched_ids = [watched_id for watched_id, _ in already_watched]
-    recommended_movie = [
-        id for id in recommended_movie if id not in already_watched_ids
-    ][:12]
-    movies = [movie_response(movie_id) for movie_id in recommended_movie]
-    return movies
+    try:
+        logger.debug(f"Generating recommendations for movie_id {movie_id}")
+        recommended_movie = features_similarity.get(movie_id, [])
+        logger.debug(f"Initial recommendations: {recommended_movie}")
+
+        already_watched_ids = [watched_id for watched_id, _ in already_watched]
+        recommended_movie = [
+            id for id in recommended_movie if id not in already_watched_ids
+        ][:12]
+        logger.debug(f"Filtered recommendations: {recommended_movie}")
+
+        movies = [movie_response(movie_id) for movie_id in recommended_movie]
+        logger.debug(f"Recommended movies data: {movies}")
+
+        return movies
+    except Exception as e:
+        logger.error(f"Error generating recommendations for movie_id {movie_id}: {e}")
+        return []
 
 
 def recommend_movies_based_on_genre(target_genre_name, already_watched):
@@ -76,47 +92,61 @@ def recommend_movies_based_on_genre(target_genre_name, already_watched):
     Returns:
         list: A list of recommended movie IDs.
     """
-    visited_movie_ids = (
-        db.session.query(UserHistory.movie_id, UserHistory.watched_at)
-        .filter_by(user_id=current_user.id)
-        .order_by(UserHistory.watched_at.desc())
-        .all()
-    )
-    visited_movie_ids_genre = []
-    # Filter visited movie IDs by genre
-    for movie_id, _ in visited_movie_ids:
-        movie = movie_response(movie_id)
-        for genre in movie.get('genres', []):
-            if genre['name'] == target_genre_name:
-                visited_movie_ids_genre.append(movie_id)
+    try:
+        logger.debug(
+            f"Generating genre-based recommendations for genre {target_genre_name}"
+        )
 
-    recommendation_scores = defaultdict(list)
+        visited_movie_ids = (
+            db.session.query(UserHistory.movie_id, UserHistory.watched_at)
+            .filter_by(user_id=current_user.id)
+            .order_by(UserHistory.watched_at.desc())
+            .all()
+        )
+        logger.debug(f"Visited movie IDs: {visited_movie_ids}")
 
-    # Calculate average similarity scores for recommended movies
-    for movie_id in visited_movie_ids_genre:
-        recommendations = similarity_score.get(movie_id, None)
-        for recommended_movie_id, sim_score in recommendations:
-            recommendation_scores[recommended_movie_id].append(sim_score)
+        visited_movie_ids_genre = []
+        for movie_id, _ in visited_movie_ids:
+            movie = movie_response(movie_id)
+            for genre in movie.get("genres", []):
+                if genre["name"] == target_genre_name:
+                    visited_movie_ids_genre.append(movie_id)
+        logger.debug(f"Filtered visited movie IDs by genre: {visited_movie_ids_genre}")
 
-    average_scores = {
-        movie_id: sum(scores) / len(scores)
-        for movie_id, scores in recommendation_scores.items()
-    }
+        recommendation_scores = defaultdict(list)
 
-    sorted_recommendations = sorted(
-        average_scores.items(), key=lambda x: x[1], reverse=True
-    )
+        for movie_id in visited_movie_ids_genre:
+            recommendations = similarity_score.get(movie_id, None)
+            for recommended_movie_id, sim_score in recommendations:
+                recommendation_scores[recommended_movie_id].append(sim_score)
 
-    recommended_movies = []
-    already_watched_ids = [watched_id for watched_id, _ in already_watched]
-    for movie_id, _ in sorted_recommendations:
-        if movie_id not in already_watched_ids:
-            movie_data = movie_response(movie_id)
-            if movie_data:
-                for genre in movie_data.get('genres', []):
-                    if genre['name'] == target_genre_name:
-                        recommended_movies.append(movie_data)
-            if len(recommended_movies) == 20:
-                break
+        average_scores = {
+            movie_id: sum(scores) / len(scores)
+            for movie_id, scores in recommendation_scores.items()
+        }
+        logger.debug(f"Average similarity scores: {average_scores}")
 
-    return recommended_movies
+        sorted_recommendations = sorted(
+            average_scores.items(), key=lambda x: x[1], reverse=True
+        )
+        logger.debug(f"Sorted recommendations: {sorted_recommendations}")
+
+        recommended_movies = []
+        already_watched_ids = [watched_id for watched_id, _ in already_watched]
+        for movie_id, _ in sorted_recommendations:
+            if movie_id not in already_watched_ids:
+                movie_data = movie_response(movie_id)
+                if movie_data:
+                    for genre in movie_data.get("genres", []):
+                        if genre["name"] == target_genre_name:
+                            recommended_movies.append(movie_data)
+                if len(recommended_movies) == 20:
+                    break
+        logger.debug(f"Final recommended movies: {recommended_movies}")
+
+        return recommended_movies
+    except Exception as e:
+        logger.error(
+            f"Error generating genre-based recommendations for genre {target_genre_name}: {e}"
+        )
+        return []
