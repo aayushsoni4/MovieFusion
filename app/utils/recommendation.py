@@ -83,15 +83,12 @@ def recommend_movies_based_on_genre(target_genre_name, already_watched):
         .all()
     )
     visited_movie_ids_genre = []
-
     # Filter visited movie IDs by genre
     for movie_id, _ in visited_movie_ids:
         movie = movie_response(movie_id)
-        if any(
-            target_genre_name.lower() == genre.get("name", "").lower()
-            for genre in movie.get("genres", [])
-        ):
-            visited_movie_ids_genre.append(movie_id)
+        for genre in movie.get('genres', []):
+            if genre['name'] == target_genre_name:
+                visited_movie_ids_genre.append(movie_id)
 
     recommendation_scores = defaultdict(list)
 
@@ -116,7 +113,9 @@ def recommend_movies_based_on_genre(target_genre_name, already_watched):
         if movie_id not in already_watched_ids:
             movie_data = movie_response(movie_id)
             if movie_data:
-                recommended_movies.append(movie_data)
+                for genre in movie_data.get('genres', []):
+                    if genre['name'] == target_genre_name:
+                        recommended_movies.append(movie_data)
             if len(recommended_movies) == 20:
                 break
 

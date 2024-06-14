@@ -288,7 +288,7 @@
     </div>
   </section>
   <!--slider-end-------->
-  {% endif %} {% if recommendations_by_genre %}
+  {% endif %} {% if recommendations_by_genre[0] %}
   <section id="latest" class="movie-post">
     <!--heading-------->
     <div class="latest-heading">
@@ -370,8 +370,7 @@
     </div>
   </section>
   <!--slider-end-------->
-  {% endif %} {% if recommendations_by_genre[1] and
-  most_watched_genres_name|length >= 2 %}
+  {% endif %} {% if recommendations_by_genre[1] %}
   <section id="latest" class="movie-post">
     <!--heading-------->
     <div class="latest-heading">

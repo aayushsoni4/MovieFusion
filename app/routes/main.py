@@ -71,9 +71,9 @@ def index():
 
         # Recommend movies based on the user's most-watched genres
         most_watched_genres_name = most_watched_genres()
-        most_watched_genres_movie = []
-        for genre in most_watched_genres_name:
-            most_watched_genres_movie.append(
+        most_watched_genres_movie = [[],[]]
+        for index, genre in enumerate(most_watched_genres_name):
+            most_watched_genres_movie[index] = (
                 recommend_movies_based_on_genre(genre, visited_movie_id)
             )
 

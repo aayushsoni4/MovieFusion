@@ -293,7 +293,7 @@ def most_watched_genres():
             genres.extend([genre["name"] for genre in movie_genres])
 
         genre_counts = Counter(genres)
-        most_frequent_genres = [genre for genre, count in genre_counts.most_common()]
+        most_frequent_genres = [genre for genre, count in genre_counts.most_common() if count >= 2]
         return most_frequent_genres[:2]
     except Exception as e:
         logger.error(f"Error occurred while retrieving most watched genres: {e}")
