@@ -39,9 +39,13 @@ def load_movie_data(file_path):
     try:
         with open(file_path, "rb") as f:
             movies = pickle.load(f)
+        logger.info(f"Loaded movie data from {file_path}")
         return movies
     except FileNotFoundError:
-        logger.error("File not found.")
+        logger.error(f"File not found: {file_path}")
+        return {}
+    except Exception as e:
+        logger.error(f"An error occurred while loading movie data: {e}")
         return {}
 
 
@@ -59,6 +63,8 @@ for movie_id, movie_data in movies.items():
     slug_title = url_slug(title)
     title_id[slug_title] = movie_id
 
+logger.info(f"Title to ID mapping created with {len(title_id)} entries")
+
 
 def fetch_poster(movie_id):
     """
@@ -72,7 +78,9 @@ def fetch_poster(movie_id):
     """
     try:
         data = movies[movie_id]
-        return "http://image.tmdb.org/t/p/w780" + data["poster_path"]
+        poster_url = "http://image.tmdb.org/t/p/w780" + data["poster_path"]
+        logger.debug(f"Fetched poster URL for movie ID {movie_id}: {poster_url}")
+        return poster_url
     except KeyError:
         logger.error(f"Poster not found for movie ID {movie_id}")
         return (
@@ -91,7 +99,9 @@ def movie_response(movie_id):
         dict: The movie data.
     """
     try:
-        return movies[movie_id]
+        movie_data = movies[movie_id]
+        logger.debug(f"Movie data retrieved for ID {movie_id}: {movie_data}")
+        return movie_data
     except KeyError:
         logger.error(f"Movie data not found for ID {movie_id}")
         return {}
@@ -109,7 +119,9 @@ def backdrop_poster(movie_id):
     """
     try:
         data = movies[movie_id]
-        return "http://image.tmdb.org/t/p/w780" + data["backdrop_path"]
+        backdrop_url = "http://image.tmdb.org/t/p/w780" + data["backdrop_path"]
+        logger.debug(f"Fetched backdrop URL for movie ID {movie_id}: {backdrop_url}")
+        return backdrop_url
     except KeyError:
         logger.error(f"Backdrop poster not found for movie ID {movie_id}")
         return "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"
@@ -134,11 +146,16 @@ def popular_movies(already_watched):
             and movie.get("id") not in already_watched_ids
         ]
 
+        logger.debug(
+            f"Filtered {len(filtered_movies)} movies based on vote count and already watched"
+        )
+
         sorted_movies = sorted(
             filtered_movies,
             key=lambda x: (x.get("vote_average", 0), x.get("popularity", 0)),
             reverse=True,
         )
+        logger.info(f"Sorted and selected top 20 popular movies")
         return sorted_movies[:20]
     except Exception as e:
         logger.error(f"Error occurred while retrieving popular movies: {e}")
@@ -165,11 +182,16 @@ def latest_movies(already_watched):
             and movie.get("id") not in already_watched_ids
         ]
 
+        logger.debug(
+            f"Filtered {len(filtered_movies)} movies based on release date, vote count and already watched"
+        )
+
         sorted_movies = sorted(
             filtered_movies,
             key=lambda x: x.get("release_date", ""),
             reverse=True,
         )
+        logger.info(f"Sorted and selected top 12 latest movies")
         return sorted_movies[:12]
     except Exception as e:
         logger.error(f"Error occurred while retrieving latest movies: {e}")
@@ -186,7 +208,12 @@ def get_movie_id_by_name(name):
     Returns:
         int: The movie ID, or None if not found.
     """
-    return title_id.get(name)
+    movie_id = title_id.get(name)
+    if movie_id:
+        logger.debug(f"Found movie ID {movie_id} for name {name}")
+    else:
+        logger.error(f"Movie ID not found for name {name}")
+    return movie_id
 
 
 def get_movie_trailer(movie_id):
@@ -213,7 +240,11 @@ def get_movie_trailer(movie_id):
             try:
                 video_url = trailer_finder.findYTtrailerbs4(query)
             except Exception as e:
+                logger.error(
+                    f"Failed to find trailer using bs4 for movie ID {movie_id}: {e}"
+                )
                 video_url = "https://www.youtube.com/watch?v=5PSNL1qE6VY"
+        logger.debug(f"Fetched trailer URL for movie ID {movie_id}: {video_url}")
         return video_url
     except Exception as e:
         logger.error(
@@ -240,11 +271,14 @@ def filter_movies_by_genre(category):
             and any(genre.get("name") == category for genre in movie.get("genres", []))
         ]
 
+        logger.debug(f"Filtered {len(filtered_movies)} movies in genre {category}")
+
         sorted_movies = sorted(
             filtered_movies,
             key=lambda x: x.get("vote_average", x.get("popularity", 0)),
             reverse=True,
         )
+        logger.info(f"Sorted and selected top 20 movies in genre {category}")
         return sorted_movies[:20]
     except Exception as e:
         logger.error(f"Error occurred while filtering movies by genre: {e}")
@@ -262,11 +296,13 @@ def perform_search(query):
         list: A list of movies matching the search query.
     """
     try:
-        return [
+        matched_movies = [
             movie
             for movie in movies.values()
             if query.lower() in url_slug(movie.get("title", ""))
         ]
+        logger.info(f"Found {len(matched_movies)} movies matching the query '{query}'")
+        return matched_movies
     except Exception as e:
         logger.error(f"Error occurred while performing search: {e}")
         return []
@@ -287,13 +323,22 @@ def most_watched_genres():
             .all()
         )
         visited_movie_id = [id[0] for id in visited_movie_id[:15]]
+        logger.debug(
+            f"Most recent 15 movies watched by user {current_user.id}: {visited_movie_id}"
+        )
+
         genres = []
         for movie_id in visited_movie_id:
             movie_genres = movie_response(movie_id)["genres"]
             genres.extend([genre["name"] for genre in movie_genres])
 
         genre_counts = Counter(genres)
-        most_frequent_genres = [genre for genre, count in genre_counts.most_common() if count >= 2]
+        most_frequent_genres = [
+            genre for genre, count in genre_counts.most_common() if count >= 2
+        ]
+        logger.info(
+            f"Most watched genres by user {current_user.id}: {most_frequent_genres[:2]}"
+        )
         return most_frequent_genres[:2]
     except Exception as e:
         logger.error(f"Error occurred while retrieving most watched genres: {e}")
