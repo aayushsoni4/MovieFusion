@@ -48,19 +48,26 @@ def index():
             .order_by(UserHistory.watched_at.desc())
             .all()
         )
+        logger.debug(f"Visited movies fetched: {len(visited_movie_id)}")
 
         # Get detailed information for visited movies
         visited_movie = [movie_response(movie_id) for movie_id, _ in visited_movie_id]
+        logger.debug(f"Fetched visited movies: {len(visited_movie)}")
 
-        # Get popular and latest movies (excluding visited ones)
+        # Get popular movies (excluding visited ones)
         popular_movie = popular_movies(already_watched=visited_movie_id)
+        logger.debug(f"Got popular movies: {len(popular_movie)}")
+
+        # Get latest movies (excluding visited ones)
         latest_movie = latest_movies(already_watched=visited_movie_id)
+        logger.debug(f"Got latest movies: {len(latest_movie)}")
 
         # Extract release year from release date for latest movies
         for movie in latest_movie:
             release_date = movie.get("release_date", "")
             release_year = release_date.split("-")[0] if release_date else ""
             movie["release_year"] = release_year
+        logger.debug(f"Got latest movies with release year: {len(latest_movie)}")
 
         # Generate recommendations based on the user's history
         because_you_watch = []
@@ -68,14 +75,18 @@ def index():
             because_you_watch = recommended_movies(
                 visited_movie_id[0][0], already_watched=visited_movie_id
             )
+        logger.debug(f"Got recommendations based on history: {len(because_you_watch)}")
 
         # Recommend movies based on the user's most-watched genres
         most_watched_genres_name = most_watched_genres()
-        most_watched_genres_movie = [[],[]]
+        most_watched_genres_movie = [[], []]
         for index, genre in enumerate(most_watched_genres_name):
-            most_watched_genres_movie[index] = (
-                recommend_movies_based_on_genre(genre, visited_movie_id)
+            most_watched_genres_movie[index] = recommend_movies_based_on_genre(
+                genre, visited_movie_id
             )
+        logger.debug(
+            f"Got recommendations by genre for {most_watched_genres_name[0]}: {len(most_watched_genres_movie[0])}, for {most_watched_genres_name[1]}: {len(most_watched_genres_movie[1])}"
+        )
 
         return render_template(
             "index.html",
@@ -125,6 +136,7 @@ def visited_movies():
             .order_by(UserHistory.watched_at.desc())
             .all()
         )
+        logger.debug(f"Visited movies fetched: {len(visited_movies)}")
 
         # Convert visited movies data to JSON format
         visited_movie_list = [
@@ -134,6 +146,8 @@ def visited_movies():
             }
             for movie_id, watched_at in visited_movies
         ]
+        logger.debug(f"Visited movies JSON response: {len(visited_movie_list)}")
+
         return jsonify({"visited_movies": visited_movie_list})
 
     except Exception as e:

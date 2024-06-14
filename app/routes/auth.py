@@ -41,6 +41,7 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        logger.debug(f"Login attempt for username/email: {username}")
 
         # Query user by username or email
         user = User.query.filter(
@@ -100,12 +101,14 @@ def forgot_password():
 
     if request.method == "POST":
         email_or_name = request.form.get("email")
+        logger.debug(f"Password reset request for email/username: {email_or_name}")
 
         # Assume you have a User model with an email field
         user = User.query.filter_by(email=email_or_name).first()
         if user:
             # Generate a unique token with a 15-minute expiration
             token = generate_token()
+            logger.debug(f"Generated password reset token for user {user.email}")
 
             # Store the token and user information (e.g., user ID) in a secure way
             session["reset_token"] = token
@@ -121,16 +124,19 @@ def forgot_password():
                     "Password reset email sent successfully. Check your inbox.",
                     "success",
                 )
+                logger.info(f"Password reset email sent to {user.email}")
                 return redirect(url_for("auth.login"))
             else:
                 flash(
                     "Error sending password reset email. Please try again later.",
                     "error",
                 )
+                logger.error(f"Error sending password reset email to {user.email}")
                 return redirect(url_for("auth.forgot_password"))
         else:
             # Flash a message if no account found with the provided email or username
             flash("No account found with that email or username.", "warning")
+            logger.warning(f"No account found for email/username: {email_or_name}")
             return redirect(url_for("auth.forgot_password"))
 
     return render_template("auth/forgot_password.html")
@@ -156,6 +162,8 @@ def reset_password(token):
         - This route is accessible only to non-authenticated users.
         - Logs successful and failed password reset attempts.
     """
+    logger.debug(f"Password reset attempt with token: {token}")
+
     # Validate the token and check its expiration
     if token == session.get("reset_token"):
         expiration_timestamp = session.get("reset_token_expiration")
@@ -167,6 +175,7 @@ def reset_password(token):
             > expiration_timestamp
         ):
             flash("Token has expired. Please request a new password reset.", "error")
+            logger.warning("Password reset token has expired.")
             return redirect(url_for("auth.forgot_password"))
 
         # Retrieve the user ID associated with the token
@@ -176,15 +185,18 @@ def reset_password(token):
             if request.method == "POST":
                 new_password = request.form.get("new_password")
                 confirm_new_password = request.form.get("confirm_new_password")
+                logger.debug(f"Password reset form submitted for user {user.email}")
 
                 # Check if the new password and confirm password match
                 if new_password != confirm_new_password:
                     flash("Passwords do not match. Please try again.", "error")
+                    logger.warning(f"Password mismatch for user {user.email}")
                     return render_template("auth/reset_password.html", token=token)
 
                 # Check password strength (optional, but recommended)
                 if len(new_password) < 8:
                     flash("Password must be at least 8 characters long.", "error")
+                    logger.warning(f"Weak password attempt for user {user.email}")
                     return render_template("auth/reset_password.html", token=token)
 
                 # Update the user's password in the database
@@ -200,11 +212,13 @@ def reset_password(token):
                     "Password reset successful. You can now log in with your new password.",
                     "success",
                 )
+                logger.info(f"Password reset successful for user {user.email}")
                 return redirect(url_for("auth.login"))
 
             return render_template("auth/reset_password.html", token=token)
 
     flash("Invalid or expired token. Please try again.", "error")
+    logger.warning("Invalid or expired token used for password reset.")
     return redirect(url_for("auth.forgot_password"))
 
 
@@ -230,23 +244,30 @@ def resend_otp():
 
     # Retrieve the user's email from the session
     email = session.get("email")
+    logger.debug(f"Resend OTP request for email: {email}")
 
     if email is None:
         flash("Error! Please register again.", "error")
+        logger.warning("Resend OTP attempt without email in session.")
         return redirect(url_for("auth.register"))
 
     # Attempt to resend the OTP
     if send_otp(email):
         flash("New OTP sent successfully.", "info")
+        logger.info(f"New OTP sent to {email}")
         return redirect(url_for("auth.validate_user"))
     else:
         flash("Error resending OTP. Please try again later.", "error")
+        logger.error(f"Error resending OTP to {email}")
 
         # Delete the user from the database if email sending fails
         user = User.query.filter_by(email=email).first()
         if user:
             db.session.delete(user)
             db.session.commit()
+            logger.info(
+                f"User {email} deleted from database due to OTP resend failure."
+            )
 
         return redirect(url_for("auth.register"))
 
@@ -279,15 +300,18 @@ def register():
         email = request.form["email"]
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
+        logger.debug(f"Registration attempt for username: {username}, email: {email}")
 
         # Validate password and confirm password
         if password != confirm_password:
             flash("Passwords do not match. Please try again.", "error")
+            logger.warning(f"Registration failed: passwords do not match for {email}")
             return redirect(url_for("auth.register"))
 
         # Check password strength
         if len(password) < 8:
             flash("Password must be at least 8 characters long.", "error")
+            logger.warning(f"Registration failed: weak password for {email}")
             return redirect(url_for("auth.register"))
 
         # Check if username or email already exists
@@ -313,12 +337,15 @@ def register():
                 session["email"] = email
                 if send_otp(email):
                     flash("OTP sent successfully.", "info")
+                    logger.info(f"OTP sent successfully to {email}")
                     return redirect(url_for("auth.validate_user"))
                 else:
                     flash("Error sending OTP. Please try again later.", "error")
+                    logger.error(f"Error sending OTP to {email}")
                     return redirect(url_for("auth.register"))
             else:
                 flash("Registration failed.", "error")
+                logger.error(f"Registration failed for {email}")
                 return redirect(url_for("auth.register"))
 
     return render_template("auth/register.html")
@@ -350,6 +377,7 @@ def validate_user():
     if request.method == "POST":
         otp_entered = request.form.get("otp")
         email = session.get("email")
+        logger.debug(f"OTP validation attempt for email: {email}")
 
         # Get the current OTP using the TOTP generator
         current_otp = 784941
@@ -361,6 +389,7 @@ def validate_user():
                 login_user(user)
                 session.pop("email", None)
                 flash("User activated successfully.", "success")
+                logger.info(f"User {email} activated successfully.")
                 return redirect(url_for("main.index"))
             else:
                 flash("Error activating user.", "error")

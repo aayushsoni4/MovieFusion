@@ -47,6 +47,7 @@ def movie(movie_name):
             .order_by(UserHistory.watched_at.desc())
             .all()
         )
+        logger.debug(f"Visited movies fetched: {len(visited_movie_id)}")
 
         movie_id = get_movie_id_by_name(movie_name)
         movie = movie_response(movie_id=movie_id)
@@ -141,7 +142,9 @@ def movie_detail(movie_id):
         logger.info(
             f"Movie details page requested for ID: {movie_id} by user: {current_user.username}"
         )
-        return jsonify(movie_response(movie_id))
+        movie_details = movie_response(movie_id)
+        logger.debug(f"Movie details fetched for ID {movie_id}")
+        return jsonify(movie_details)
     except Exception as e:
         logger.error(f"Error occurred while fetching movie details: {str(e)}")
         return render_template(
@@ -176,6 +179,9 @@ def rate_movie(movie_id, stars):
         # Validate rating
         if 1 <= stars <= 5:
             if add_movie_rating(movie_id, stars):
+                logger.info(
+                    f"User {current_user.username} rated movie {movie_id} with {stars} stars"
+                )
                 return jsonify(
                     {
                         "message": "Rating added/updated successfully",
@@ -183,8 +189,14 @@ def rate_movie(movie_id, stars):
                     }
                 )
             else:
+                logger.error(
+                    f"Failed to add/update rating for movie {movie_id} by user {current_user.username}"
+                )
                 return jsonify({"error": "Failed to add/update rating"}), 500
         else:
+            logger.error(
+                f"Invalid rating value {stars} for movie {movie_id} by user {current_user.username}"
+            )
             return jsonify({"error": "Invalid rating value"}), 400
     except Exception as e:
         logger.error(f"Error while processing rating for movie {movie_id}: {e}")

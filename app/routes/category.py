@@ -41,6 +41,7 @@ def category(genre_name):
 
         # Filter movies by the specified genre
         movies = filter_movies_by_genre(genre_name)
+        logger.debug(f"Filtered movies length: {len(movies)}")
 
         # Render the category page template
         return render_template("category.html", movies=movies, genre=genre_name)

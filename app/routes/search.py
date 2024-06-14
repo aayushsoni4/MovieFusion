@@ -34,6 +34,7 @@ def search(query):
 
         # Perform search based on the query
         search_results = perform_search(query)
+        logger.debug(f"Search results length: {len(search_results)}")
 
         # Render the search results page
         return render_template(
