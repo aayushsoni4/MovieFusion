@@ -5,8 +5,6 @@ from logger import logger
 from app import db, mail
 from app.models import User
 import secrets
-# import pyotp
-# import os
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -27,6 +25,8 @@ def add_user(username, email, password):
     Returns:
         bool: True if the user is successfully added, False otherwise.
     """
+    logger.debug(f"Attempting to add user with username: {username}, email: {email}")
+
     if not username or not password:
         logger.error("Invalid username or password provided.")
         return False
@@ -39,6 +39,7 @@ def add_user(username, email, password):
         return True
     except Exception as e:
         logger.error(f"Error adding user to 'users' table: {e}")
+        db.session.rollback()
         return False
 
 
@@ -52,8 +53,10 @@ def send_otp(email):
     Returns:
         bool: True if the email was sent successfully, False otherwise.
     """
+    logger.debug(f"Attempting to send OTP to email: {email}")
+
     try:
-        token = 784941
+        token = 784941  # For testing purposes; replace with `otp.now()` for actual OTP
         # token = otp.now()
         subject = "Welcome to MovieFusion! Let's Get Started"
         message_body = render_template("email/otp_email.html", token=token)
@@ -73,7 +76,10 @@ def generate_token():
     Returns:
         str: A securely generated token.
     """
-    return secrets.token_urlsafe(32)
+    logger.debug("Generating a secure token")
+    token = secrets.token_urlsafe(32)
+    logger.debug(f"Generated token: {token}")
+    return token
 
 
 def activate_user(email):
@@ -86,6 +92,8 @@ def activate_user(email):
     Returns:
         bool or None: True if the user is activated, None if the user is not found.
     """
+    logger.debug(f"Attempting to activate user with email: {email}")
+
     try:
         user = User.query.filter_by(email=email).first()
         if user:
@@ -98,6 +106,7 @@ def activate_user(email):
             return None
     except Exception as e:
         logger.error(f"Error activating user in 'users' table: {e}")
+        db.session.rollback()
         return None
 
 
@@ -112,6 +121,10 @@ def send_password_reset_email(email, token):
     Returns:
         bool: True if the email is sent successfully, False otherwise.
     """
+    logger.debug(
+        f"Attempting to send password reset email to: {email} with token: {token}"
+    )
+
     reset_link = url_for("auth.reset_password", token=token, _external=True)
     try:
         subject = "Password Reset Request for MovieFusion"
