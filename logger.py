@@ -12,7 +12,7 @@ log_levels = {
 }
 
 # Set up environment-specific log level
-env_log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+env_log_level = os.getenv("LOG_LEVEL", "DEBUG").upper()
 log_level = log_levels.get(env_log_level, logging.INFO)
 
 # Create a logger
