@@ -2,6 +2,7 @@ venv
 .env
 __pycache__
 app.log
+movies.db
 temp.py
 temp.txt
 temp.ipynb
