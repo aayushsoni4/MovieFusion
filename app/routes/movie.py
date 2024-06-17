@@ -62,9 +62,16 @@ def movie(movie_name):
 
         # Fetch user rating if it exists
         user_rating = UserRating.query.filter_by(
-            user_id=current_user.id, movie_id=movie_id
+            user_id=current_user.id, movie_id=int(float(movie_id))
         ).first()
         rating = user_rating.rating if user_rating else 0
+
+        if user_rating:
+            rating = user_rating.rating
+            logger.debug(f"User {current_user.username} already rated movie {movie_name} with rating {rating}.")
+        else:
+            rating = 0
+            logger.debug(f"User {current_user.username} has not rated movie {movie_name} yet.")
 
         return render_template(
             "movie.html",
