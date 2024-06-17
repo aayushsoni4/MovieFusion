@@ -100,7 +100,6 @@ def movie_response(movie_id):
     """
     try:
         movie_data = movies[movie_id]
-        logger.debug(f"Movie data retrieved for ID {movie_id}: {movie_data}")
         return movie_data
     except KeyError:
         logger.error(f"Movie data not found for ID {movie_id}")
@@ -120,7 +119,6 @@ def backdrop_poster(movie_id):
     try:
         data = movies[movie_id]
         backdrop_url = "http://image.tmdb.org/t/p/w780" + data["backdrop_path"]
-        logger.debug(f"Fetched backdrop URL for movie ID {movie_id}: {backdrop_url}")
         return backdrop_url
     except KeyError:
         logger.error(f"Backdrop poster not found for movie ID {movie_id}")
@@ -155,7 +153,6 @@ def popular_movies(already_watched):
             key=lambda x: (x.get("vote_average", 0), x.get("popularity", 0)),
             reverse=True,
         )
-        logger.info(f"Sorted and selected top 20 popular movies")
         return sorted_movies[:20]
     except Exception as e:
         logger.error(f"Error occurred while retrieving popular movies: {e}")
@@ -191,7 +188,6 @@ def latest_movies(already_watched):
             key=lambda x: x.get("release_date", ""),
             reverse=True,
         )
-        logger.info(f"Sorted and selected top 12 latest movies")
         return sorted_movies[:12]
     except Exception as e:
         logger.error(f"Error occurred while retrieving latest movies: {e}")
