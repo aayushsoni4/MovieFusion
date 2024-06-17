@@ -3,7 +3,7 @@
         display: inline-block;
     }
 
-    .rating-stars input[type="radio"] {
+    .rating-stars input[type='radio'] {
         display: none;
     }
 
@@ -17,12 +17,12 @@
         content: '★';
     }
 
-    .rating-stars input[type="radio"]:checked~label {
+    .rating-stars input[type='radio']:checked~label {
         color: #ffcc00;
     }
 
-    .rating-stars input[type="radio"]:hover~label,
-    .rating-stars input[type="radio"]:checked~label:hover {
+    .rating-stars input[type='radio']:hover~label,
+    .rating-stars input[type='radio']:checked~label:hover {
         color: #ffcc00;
     }
 
@@ -35,35 +35,38 @@
     <div class="rating-container" data-movie-id="{{ movie_id }}" data-rating="{{ user_rating }}">
         <div class="rating-stars">
             {% for i in range(1, 6) %}
-            <input type="radio" id="star{{ 6-i }}" name="rating" value="{{ 6-i }}" {% if user_rating and 6-user_rating>=
-            i
-            %} checked {% endif %}>
-            <label for="star{{ 6-i }}" title="{{ 6-i }} star{{ 's' if i > 1 else '' }}"></label>
+            <input type="radio" id="star{{ 6 - i }}" name="rating" value="{{ 6 - i }}"
+                {% if user_rating and 6-user_rating >= i %} checked {% endif %}>
+            <label for="star{{ 6 - i }}" title="{{ 6 - i }} star{{ 's' if i > 1 else '' }}"></label>
             {% endfor %}
         </div>
     </div>
 </body>
 <script>
     // Get all radio buttons for rating
-    const ratingInputs = document.querySelectorAll('.rating-stars input[type="radio"]');
+    const ratingInputs = document.querySelectorAll(
+        '.rating-stars input[type="radio"]'
+    )
 
     // Add event listener to each radio button
     ratingInputs.forEach(radio => {
         radio.addEventListener('change', () => {
             // Perform action when a rating is selected (e.g., send to server, update UI)
-            const selectedRating = radio.value;
-            console.log('User rated the movie:', selectedRating);
-        });
-    });
+            const selectedRating = radio.value
+            console.log('User rated the movie:', selectedRating)
+        })
+    })
 
     document.addEventListener('DOMContentLoaded', () => {
-        const ratingContainer = document.querySelector('.rating-container');
-        const movieId = ratingContainer.dataset.movieId;
-        const ratingInputs = document.querySelectorAll('.rating-stars input[type="radio"]');
+        const ratingContainer = document.querySelector('.rating-container')
+        const movieId = ratingContainer.dataset.movieId
+        const ratingInputs = document.querySelectorAll(
+            '.rating-stars input[type="radio"]'
+        )
 
         ratingInputs.forEach(radio => {
             radio.addEventListener('change', () => {
-                const selectedRating = radio.value;
+                const selectedRating = radio.value
 
                 // Send rating to the backend
                 fetch(`rating/${movieId}/${selectedRating}`, {
@@ -75,23 +78,22 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.message) {
-                            console.log(data.message);
+                            console.log(data.message)
 
                             // Update the UI to reflect the new rating (example)
                             ratingInputs.forEach(input => {
-                                input.checked = false; // Uncheck all stars
-                            });
+                                input.checked = false // Uncheck all stars
+                            })
 
                             // Check the selected star again
-                            document.getElementById(`star${data.new_rating}`).checked = true;
+                            document.getElementById(`star${data.new_rating}`).checked = true
                         } else if (data.error) {
-                            console.error(data.error);
+                            console.error(data.error)
                             // Handle error in UI
                         }
                     })
-                    .catch(error => console.error('Error:', error));
-            });
-        });
-    });
-
+                    .catch(error => console.error('Error:', error))
+            })
+        })
+    })
 </script>

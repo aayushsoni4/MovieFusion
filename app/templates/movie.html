@@ -1,5 +1,5 @@
 {% include 'layout.html'%}
-<title>{{ movie['title']}}</title>
+<title>{{ movie['title'] }}</title>
 
 <body>
     <!--==Scroll-Progress-bar=========================-->
@@ -9,7 +9,7 @@
     <!--==Navigation===================================-->
     <nav class="navigation">
         <!--menu-btn--------------->
-        <input type="checkbox" class="menu-btn" id="menu-btn">
+        <input type="checkbox" class="menu-btn" id="menu-btn" />
         <label for="menu-btn" class="menu-icon">
             <span class="nav-icon"></span>
         </label>
@@ -32,7 +32,7 @@
     <section class="movie-banner">
         <!--==img==================================-->
         <div class="m-banner-img">
-            <img alt="" src="https://media.themoviedb.org/t/p/w780{{movie['backdrop_path']}}">
+            <img alt="" src="https://media.themoviedb.org/t/p/w780{{ movie['backdrop_path'] }}" />
         </div>
         <!--content================================-->
         <div class="banner-container">
@@ -42,35 +42,33 @@
                 <div class="title-top">
                     <!--title----->
                     <div class="movie-title">
-                        <h1>{{movie['title']}}</h1>
+                        <h1>{{ movie['title'] }}</h1>
                     </div>
                     <!--more-about-movie-->
                     <div class="more-about-movie">
                         <span class="quality">Full HD</span>
                         <div class="rating">
-                            {{ '%.1f' % movie['vote_average']}}
+                            {{ '%.1f' % movie['vote_average'] }}
                             <img alt="tmbd"
                                 src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_1-5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4.svg" />
                         </div>
-                        <span>{{movie['release']}}</span>
-                        {% if movie['runtime'] < 60 %} <span>
-                            {{ movie['runtime'] }}min
-                            </span>
-                            {% else %}
-                            <span>
-                                {{ movie['runtime'] // 60 }}h {{ movie['runtime'] % 60 }}min
-                            </span>
-                            {% endif %}
+                        <span>{{ movie['release'] }}</span>
+                        {% if movie['runtime'] < 60 %}
+                        <span> {{ movie['runtime'] }}min </span>
+                        {% else %}
+                        <span>
+                            {{ movie['runtime'] // 60 }}h {{ movie['runtime'] % 60 }}min
+                        </span>
+                        {% endif %}
                     </div>
                     <!--language--------->
                     <div class="language">
                         <span>English</span>
                     </div>
 
-                    <div class="more-about-movie" style="margin-top: 20px; padding-left:10px">
-                        {% set movie_id = movie['id']%}
-                        {% set user_rating = rating %}
-                        {% include 'rating.html' with context %}
+                    <div class="more-about-movie" style="margin-top: 20px; padding-left: 10px">
+                        {% set movie_id = movie['id']%} {% set user_rating = rating %} {%
+            include 'rating.html' with context %}
                     </div>
                 </div>
                 <!--Title-botttom==========================-->
@@ -78,12 +76,10 @@
                     <!--category------->
                     <div class="category">
                         <strong>Category</strong><br />
-                        {% if movie['genres'] %}
-                        {% for genre in movie['genres']%}
-                        <a href="{{url_for('category.category', genre_name=genre['name']|url_slug)}}">{{ genre['name']
-                            }}</a>
-                        {% endfor %}
-                        {% endif %}
+                        {% if movie['genres'] %} {% for genre in movie['genres']%}
+                        <a
+                            href="{{url_for('category.category', genre_name=genre['name']|url_slug)}}">{{ genre['name'] }}</a>
+                        {% endfor %} {% endif %}
                     </div>
                     <!--trailer-btn---->
                     <a href="javascript:void(0);" class="watch-btn" onclick="toggleTrailer();">Watch Trailer</a>
@@ -107,7 +103,8 @@
                 <!--movie------->
                 <div class="play-movie">
                     <video id="m-video" controls>
-                        <source src="{{ url_for('static', filename='movie-data/Interstellar.mp4') }}" type="video/mp4">
+                        <source src="{{ url_for('static', filename='movie-data/Interstellar.mp4') }}"
+                            type="video/mp4" />
                     </video>
                 </div>
             </div>
@@ -116,23 +113,21 @@
     <!--Banner-end------------->
     <!--==Trailer-iframe=========================================-->
     <section id="trailer-section">
-        <iframe width="720" height="405" src="{{movie['embed_trailer']}}" title="YouTube video player" frameborder="0"
+        <iframe width="720" height="405" src="{{ movie['embed_trailer'] }}" title="YouTube video player" frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </section>
     <!--Trailer-End=====================================-->
     <!--details=====================================-->
     <section class="movie-details">
-        <strong>{{movie['title']}}</strong>
-        <p>
-            {{movie['overview']}}
-        </p>
+        <strong>{{ movie['title'] }}</strong>
+        <p>{{ movie['overview'] }}</p>
     </section>
 
     <!--== Recommended-Movies =========================================-->
     <section id="latest" class="movie-post">
         <!--heading-------->
-        <div class="latest-heading" style="text-align: center;">
+        <div class="latest-heading" style="text-align: center">
             <h1>You may also like</h1>
         </div>
         <!--container------->
@@ -154,20 +149,17 @@
                             <div class="movie-name">
                                 <span>{{ movie.get('release_date',"")[:4] }}</span>
                                 <a href="{{ url_for('movie.movie', movie_name=movie['title']|url_slug) }}">
-                                    {{movie['title']}}
+                                    {{ movie['title'] }}
                                 </a>
                             </div>
                             <!--Category-and-rating---->
                             <div class="category-rating">
                                 <!--category-->
                                 <div class="category">
-                                    {% if movie.get('genres') %}
-                                    {% for genre in movie['genres']%}
-                                    <a href="{{url_for('category.category', genre_name=genre['name']|url_slug)}}">{{
-                                        genre['name']
-                                        }}</a>
-                                    {% endfor %}
-                                    {% endif %}
+                                    {% if movie.get('genres') %} {% for genre in movie['genres']%}
+                                    <a
+                                        href="{{url_for('category.category', genre_name=genre['name']|url_slug)}}">{{ genre['name'] }}</a>
+                                    {% endfor %} {% endif %}
                                 </div>
                                 <!--rating--->
                                 <div class="rating">
@@ -185,7 +177,6 @@
         <!--container-end--->
     </section>
 
-
     <!--==footer==============================-->
     <footer>
         <!--footer-logo--->
@@ -198,137 +189,138 @@
     <script>
         /*==scroll-progress-bar======================*/
         let scrollPrecentage = () => {
-            let scrollProgress = document.getElementById("progress");
-            let pos = document.documentElement.scrollTop;
-            let calcHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            let scrollValue = Math.round(pos * 100 / calcHeight);
-            scrollProgress.style.width = scrollValue + "%";
+            let scrollProgress = document.getElementById('progress')
+            let pos = document.documentElement.scrollTop
+            let calcHeight =
+                document.documentElement.scrollHeight -
+                document.documentElement.clientHeight
+            let scrollValue = Math.round((pos * 100) / calcHeight)
+            scrollProgress.style.width = scrollValue + '%'
         }
-        window.onscroll = scrollPrecentage;
-        window.onload = scrollPrecentage;
+        window.onscroll = scrollPrecentage
+        window.onload = scrollPrecentage
         /*--menu-btn-fixed-when-scroll============*/
         $(window).scroll(function () {
             if ($(document).scrollTop() > 20) {
-                $('.navigation').addClass('fix-icon');
+                $('.navigation').addClass('fix-icon')
+            } else {
+                $('.navigation').removeClass('fix-icon')
             }
-            else {
-                $('.navigation').removeClass('fix-icon');
-            }
-        });
+        })
 
         /*==popup-open==================================*/
         $(document).on('click', '.play-btn a', function () {
-            $('.play').addClass('active-popup');
-        });
+            $('.play').addClass('active-popup')
+        })
         /*==popup-Close==================================*/
         $(document).on('click', '.close-movie', function () {
-            $('.play').removeClass('active-popup');
-        });
-
+            $('.play').removeClass('active-popup')
+        })
 
         window.onload = function () {
-            var closeButton = document.querySelector('.close-movie');
+            var closeButton = document.querySelector('.close-movie')
             closeButton.addEventListener('click', function () {
-                var iframe = document.querySelector('.play-movie iframe');
-                var videoSrc = iframe.src;
-                iframe.src = ''; // This line stops the video
-                iframe.src = videoSrc;
-                document.getElementById('play').style.display = 'none';
-            });
-        };
+                var iframe = document.querySelector('.play-movie iframe')
+                var videoSrc = iframe.src
+                iframe.src = '' // This line stops the video
+                iframe.src = videoSrc
+                document.getElementById('play').style.display = 'none'
+            })
+        }
 
         $(document).ready(function () {
             // Variable to store the current video time
-            var currentTime = 0;
+            var currentTime = 0
 
             // Play the video when the popup opens
             $('.play-btn a').on('click', function () {
-                var video = $('#m-video').get(0);
+                var video = $('#m-video').get(0)
                 if (video) {
                     // Set the current time to where it was left off
-                    video.currentTime = currentTime;
-                    video.play();
+                    video.currentTime = currentTime
+                    video.play()
                 }
-            });
+            })
 
             // Pause the video and save the current time when the popup closes
             $('.close-movie').on('click', function () {
-                var video = $('#m-video').get(0);
+                var video = $('#m-video').get(0)
                 if (video) {
                     // Save the current time
-                    currentTime = video.currentTime;
-                    video.pause();
+                    currentTime = video.currentTime
+                    video.pause()
                 }
-            });
-        });
+            })
+        })
 
         $(document).ready(function () {
             // Event listener for play button click
             $('.play-movie-btn').on('click', function () {
                 // Get the movie ID from the data attribute
-                const movieId = $(this).data('movie-id');
-                console.log('Movie ID:', movieId); // Add this line for debugging
+                const movieId = $(this).data('movie-id')
+                console.log('Movie ID:', movieId) // Add this line for debugging
 
                 // Make an AJAX request to the Flask endpoint
                 fetch(`history/${movieId}`, { method: 'POST' })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
+                            throw new Error(`HTTP error! status: ${response.status}`)
                         }
-                        return response.json();
+                        return response.json()
                     })
                     .then(data => {
                         if (data.message) {
-                            console.log(data.message);
+                            console.log(data.message)
                         } else if (data.error) {
-                            console.error(data.error);
+                            console.error(data.error)
                         }
                     })
                     .catch(error => {
-                        console.error('Error sending movie ID to history endpoint:', error);
-                    });
-            });
-        });
-
+                        console.error('Error sending movie ID to history endpoint:', error)
+                    })
+            })
+        })
     </script>
     <script>
         function submitSearch() {
-            var searchQuery = document.getElementById('search-input').value;
+            var searchQuery = document.getElementById('search-input').value
             if (!searchQuery) {
-                return;
+                return
             }
-            var slugifiedQuery = slugify(searchQuery);
-            window.location.href = '/search/' + encodeURIComponent(slugifiedQuery);
+            var slugifiedQuery = slugify(searchQuery)
+            window.location.href = '/search/' + encodeURIComponent(slugifiedQuery)
         }
         function slugify(text) {
             return text
                 .toLowerCase()
                 .replace(/[^\w\s-]/g, '') // Remove special characters
                 .replace(/\s+/g, '-') // Replace spaces with hyphens
-                .replace(/-+/g, '-'); // Remove consecutive hyphens
+                .replace(/-+/g, '-') // Remove consecutive hyphens
         }
-        document.getElementById('search-input').addEventListener('keypress', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                submitSearch();
-            }
-        });
+        document
+            .getElementById('search-input')
+            .addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault()
+                    submitSearch()
+                }
+            })
 
         function toggleTrailer() {
-            var trailerSection = document.getElementById('trailer-section');
-            var movieBanner = document.querySelector('.movie-banner'); // Get the movie banner element
+            var trailerSection = document.getElementById('trailer-section')
+            var movieBanner = document.querySelector('.movie-banner') // Get the movie banner element
             if (trailerSection.classList.contains('visible')) {
-                trailerSection.classList.remove('visible');
-                trailerSection.classList.add('hidden');
+                trailerSection.classList.remove('visible')
+                trailerSection.classList.add('hidden')
                 setTimeout(function () {
-                    trailerSection.style.display = 'none';
-                    movieBanner.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Center the movie banner
-                }, 50); // Hide after animation
+                    trailerSection.style.display = 'none'
+                    movieBanner.scrollIntoView({ behavior: 'smooth', block: 'center' }) // Center the movie banner
+                }, 50) // Hide after animation
             } else {
-                trailerSection.style.display = 'flex';
-                trailerSection.classList.remove('hidden');
-                trailerSection.classList.add('visible');
-                trailerSection.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Center the trailer section
+                trailerSection.style.display = 'flex'
+                trailerSection.classList.remove('hidden')
+                trailerSection.classList.add('visible')
+                trailerSection.scrollIntoView({ behavior: 'smooth', block: 'center' }) // Center the trailer section
             }
         }
     </script>

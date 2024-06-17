@@ -1,13 +1,7 @@
 <head>
   <title>Login | MovieFusion</title>
-  <link
-    rel="shortcut icon"
-    href="{{ url_for('static', filename='images/fav-icon.png') }}"
-  />
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/form_style.css') }}"
-  />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/fav-icon.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/form_style.css') }}" />
 </head>
 
 <body>
@@ -35,7 +29,7 @@
             </div>
             <div class="inputBox" style="margin-top: 5%">
               <button type="submit">
-                Login {% include 'auth/submit_button.html' %}
+                Login
               </button>
             </div>
           </form>
